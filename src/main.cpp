@@ -2,7 +2,7 @@
 #include "accel.hpp"
 #include "gps.hpp"
 #include "kalman.hpp"
-#include "sd.hpp"
+#include "log.hpp"
 #include "config.hpp"
 #include "util.hpp"
 #include "scheduler.hpp"
@@ -14,6 +14,7 @@
 #include <ADC.h>
 
 // Prototypes
+void command_step();
 void blink_step();
 void print_step();
 void deployment_step();
@@ -56,13 +57,14 @@ void setup()
 	gps_setup();
 	baro_setup();
 	accel_setup();
-#if SD_LOG
-	sd_setup();
+#if LOG_ENABLE
+	log_setup();
 #endif
 	radio_setup();
 	kalman_setup();
 
 	scheduler_add(TaskId::Deployment, Task(deployment_step, KALMAN_PERIOD * 1000L));
+	scheduler_add(TaskId::Command, Task(command_step, 100'000L));
 	scheduler_add(TaskId::Print, Task(print_step, 3'000'000L));
 	scheduler_add(TaskId::Blink, Task(blink_step, (KALMAN_PERIOD / 2) * 1000L));
 }
@@ -76,6 +78,15 @@ void loop()
 	}
 }
 
+void command_step()
+{
+	if (Serial.available()) {
+		String s = Serial.readStringUntil('\n');
+		if (s == "ReadFlights") {
+			log_print();
+		}
+	}
+}
 
 void blink_step()
 {
@@ -140,8 +151,8 @@ void deployment_step()
 		if (state->rate > LAUNCH_VELOCITY && state->accel > LAUNCH_ACCEL) {
 			phase = FlightPhase::Launched;
 			digitalWrite(PIN_LAUNCH, HIGH);
-#if SD_LOG
-			sd_commit(true);
+#if LOG_ENABLE
+			log_start();
 #endif
 			send_now = true;
 		}
@@ -153,12 +164,6 @@ void deployment_step()
 			phase = FlightPhase::DescendingWithDrogue;
 
 			Serial.println(F("===================================== Apogee!"));
-#if SD_LOG
-			Print *msgs = sd_messages();
-			msgs->print("Drogue deployed at t=");
-			msgs->print(step_time);
-			msgs->println("us.");
-#endif
 			send_now = true;
 		}
 	} else if (phase == FlightPhase::DescendingWithDrogue) {
@@ -179,12 +184,6 @@ void deployment_step()
 			digitalWrite(PIN_MAIN, HIGH);
 
 			Serial.println(F("===================================== Deploy main!"));
-#if SD_LOG
-			Print *msgs = sd_messages();
-			msgs->print("Main deployed at t=");
-			msgs->print(step_time);
-			msgs->println("us.");
-#endif
 			send_now = true;
 		}
 	} else if (phase == FlightPhase::DescendingWithMain) {
@@ -203,8 +202,8 @@ void deployment_step()
 			land_time = 0;
 		}
 	} else if (phase == FlightPhase::Landed) {
-#if SD_LOG
-		sd_commit(false);
+#if LOG_ENABLE
+		log_stop();
 #endif
 	}
 
@@ -222,20 +221,21 @@ void deployment_step()
 	Serial.println(batt_v);
 	batt_v = map(batt_v, BATT_MIN_READING, BATT_FULL_READING, 0, BATT_FULL_VOLTAGE);
 
-#if SD_LOG
-	SdDataRecord dr;
-	dr.time_ms = step_time;
-	dr.temp = baro_get_temp();
-	dr.state = *state;
-	dr.altitude = raw_alt;
-	dr.accel_x = accel[0];
-	dr.accel_y = accel[1];
-	dr.accel_z = accel[2];
-	dr.lat = gps_get_lat();
-	dr.lon = gps_get_lon();
-	dr.gps_alt = gps_get_alt();
-	dr.batt_v = batt_v;
-	sd_log(dr);
+#if LOG_ENABLE
+	LogMessage msg {
+		.time_ms = step_time,
+		.state = *state,
+		.temp = baro_get_temp(),
+		.altitude = raw_alt,
+		.accel_x = accel[0],
+		.accel_y = accel[1],
+		.accel_z = accel[2],
+		.lat = gps_get_lat(),
+		.lon = gps_get_lon(),
+		.gps_alt = gps_get_alt(),
+		.batt_v = batt_v,
+	};
+	log_add(msg);
 #endif
 
 	if (send_now) {

@@ -1,6 +1,6 @@
 #pragma once
 
-#define SD_LOG 0
+#define LOG_ENABLE 1
 
 // Rates which trigger a launch event (deployment will only occur
 // when apogee is detected after a launch event).  Velocity and
@@ -58,12 +58,18 @@
 // The voltage that the battery is actually at when full (in millivolts).
 #define BATT_FULL_VOLTAGE 8320
 
+// Number of milliseconds of log data write out from before launch is detected.
+#define PRELOG_MS 2000
+
 #define PIN_ADXL345_CS 24
 #define PIN_BMP280_CS 25
+#define PIN_FLASH_CS
 #define PIN_LAUNCH 26
 #define PIN_DROGUE 27
 #define PIN_MAIN 28
 #define PIN_BATT_V A1
+
+#define EEPROM_FLIGHT 0
 
 // These are from the perspective of the XBee module. i.e. PIN_XBEE_CTS is the Teensy's RTS pin and is connected to the XBee's CTS pin.
 // Any digital pin.

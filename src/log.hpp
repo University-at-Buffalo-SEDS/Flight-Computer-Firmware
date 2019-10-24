@@ -1,10 +1,8 @@
 #pragma once
-#include <stdint.h>
-#include <Arduino.h>
-
+#include <cstdint>
 #include "kalman.hpp"
 
-struct SdDataRecord {
+struct LogMessage {
 	uint32_t time_ms;
 	KalmanState state;
 	int32_t temp;
@@ -17,8 +15,8 @@ struct SdDataRecord {
 	//} gps_time;
 };
 
-
-void sd_setup();
-void sd_log(const SdDataRecord &data);
-void sd_commit(bool enable);
-Print *sd_messages();
+void log_setup();
+void log_start();
+void log_stop();
+void log_add(const LogMessage &data);
+void log_print();
