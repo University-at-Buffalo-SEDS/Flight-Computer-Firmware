@@ -63,7 +63,7 @@
 
 #define PIN_ADXL345_CS 24
 #define PIN_BMP280_CS 25
-#define PIN_FLASH_CS
+#define PIN_FLASH_CS 29
 #define PIN_LAUNCH 26
 #define PIN_DROGUE 27
 #define PIN_MAIN 28

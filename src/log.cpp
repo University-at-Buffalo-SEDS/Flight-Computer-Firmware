@@ -11,6 +11,7 @@
 #define LOG_WRITE_BUF_SIZE (sizeof(LogMessage) * 32)
 
 void log_step();
+void log_print_msg(const LogMessage &msg);
 
 RingBuffer<LogMessage, LOG_BUF_SIZE> log_buf;
 RingBuffer<uint8_t, LOG_WRITE_BUF_SIZE> write_buf;
@@ -32,17 +33,17 @@ void log_setup()
 
 void log_start()
 {
-    write_enabled = true;
-    // Flight started, advance to next flight.
-    EEPROM.write(EEPROM_FLIGHT, wrapping_add(flight_num, 1, FLASH_FLIGHTS));
-    // Run one step to move records from the log buffer to the write buffer
-    // and start the first erase operation.
-    log_step();
+	write_enabled = true;
+	// Flight started, advance to next flight.
+	EEPROM.write(EEPROM_FLIGHT, wrapping_add(flight_num, 1, FLASH_FLIGHTS));
+	// Run one step to move records from the log buffer to the write buffer
+	// and start the first erase operation.
+	log_step();
 }
 
 void log_stop()
 {
-    write_enabled = false;
+	write_enabled = false;
 }
 
 void log_step()
@@ -95,77 +96,77 @@ void log_add(const LogMessage &data)
 
 void log_print()
 {
-    if (write_enabled) {
-        Serial.println("Cannot read while in flight!");
-        return;
-    }
+	if (write_enabled) {
+		Serial.println("Cannot read while in flight!");
+		return;
+	}
 
-    uint8_t first_flight = EEPROM.read(EEPROM_FLIGHT);
-    uint8_t page[FLASH_PAGE_SIZE];
-    LogMessage msg;
-    uint32_t last_time = 0;
+	uint8_t first_flight = EEPROM.read(EEPROM_FLIGHT);
+	uint8_t page[FLASH_PAGE_SIZE];
+	LogMessage msg;
+	uint32_t last_time = 0;
 
-    for (size_t flight_i = 0; flight_i < FLASH_FLIGHTS; ++flight_i) {
-        RingBuffer<uint8_t, LOG_WRITE_BUF_SIZE> read_buf;
-        uint8_t flight = wrapping_add(first_flight, flight_i, FLASH_FLIGHTS);
-	    size_t flight_addr = FLASH_FLIGHT_SIZE * flight;
-        bool flight_done = false;
+	for (size_t flight_i = 0; flight_i < FLASH_FLIGHTS; ++flight_i) {
+		RingBuffer<uint8_t, LOG_WRITE_BUF_SIZE> read_buf;
+		uint8_t flight = wrapping_add(first_flight, flight_i, FLASH_FLIGHTS);
+		size_t flight_addr = FLASH_FLIGHT_SIZE * flight;
+		bool flight_done = false;
 
-        for (size_t page_i = 0; page_i < FLASH_FLIGHT_SIZE; ++page_i) {
-            flash_read(flight_addr + page_i, page);
+		for (size_t page_i = 0; page_i < FLASH_FLIGHT_SIZE; ++page_i) {
+			flash_read(flight_addr + page_i, page);
 
-            if (!read_buf.push(page, FLASH_PAGE_SIZE, false)) {
-                Serial.println("Read buffer error.");
-                break;
-            }
+			if (!read_buf.push(page, FLASH_PAGE_SIZE, false)) {
+				Serial.println("Read buffer error.");
+				break;
+			}
 
-            while (read_buf.pop(reinterpret_cast<uint8_t*>(&msg), sizeof(LogMessage))) {
-                // Flight ends if difference between timestamps
-                // is too large or there is no difference.
-                if ((msg.time_ms - last_time > 1000 || msg.time_ms == last_time) && page_i > 0) {
-                    flight_done = true;
-                    break;
-                }
+			while (read_buf.pop(reinterpret_cast<uint8_t*>(&msg), sizeof(LogMessage))) {
+				// Flight ends if difference between timestamps
+				// is too large or there is no difference.
+				if ((msg.time_ms - last_time > 1000 || msg.time_ms == last_time) && page_i > 0) {
+					flight_done = true;
+					break;
+				}
 
-                log_print_msg(msg);
+				log_print_msg(msg);
 
-                last_time = msg.time_ms;
-            }
+				last_time = msg.time_ms;
+			}
 
-            if (flight_done) {
-                break;
-            }
-        }
-        Serial.println("---");
-    }
+			if (flight_done) {
+				break;
+			}
+		}
+		Serial.println("---");
+	}
 }
 
 void log_print_msg(const LogMessage &msg)
 {
-    Serial.print(msg.time_ms);
-    Serial.print(',');
-    Serial.print(msg.state.pos);
-    Serial.print(',');
-    Serial.print(msg.state.rate);
-    Serial.print(',');
-    Serial.print(msg.state.accel);
-    Serial.print(',');
-    Serial.print(msg.temp);
-    Serial.print(',');
-    Serial.print(msg.altitude);
-    Serial.print(',');
-    Serial.print(msg.accel_x);
-    Serial.print(',');
-    Serial.print(msg.accel_y);
-    Serial.print(',');
-    Serial.print(msg.accel_z);
-    Serial.print(',');
-    Serial.print(msg.lat);
-    Serial.print(',');
-    Serial.print(msg.lon);
-    Serial.print(',');
-    Serial.print(msg.gps_alt);
-    Serial.print(',');
-    Serial.print(msg.batt_v);
-    Serial.println();
+	Serial.print(msg.time_ms);
+	Serial.print(',');
+	Serial.print(msg.state.pos);
+	Serial.print(',');
+	Serial.print(msg.state.rate);
+	Serial.print(',');
+	Serial.print(msg.state.accel);
+	Serial.print(',');
+	Serial.print(msg.temp);
+	Serial.print(',');
+	Serial.print(msg.altitude);
+	Serial.print(',');
+	Serial.print(msg.accel_x);
+	Serial.print(',');
+	Serial.print(msg.accel_y);
+	Serial.print(',');
+	Serial.print(msg.accel_z);
+	Serial.print(',');
+	Serial.print(msg.lat);
+	Serial.print(',');
+	Serial.print(msg.lon);
+	Serial.print(',');
+	Serial.print(msg.gps_alt);
+	Serial.print(',');
+	Serial.print(msg.batt_v);
+	Serial.println();
 }
