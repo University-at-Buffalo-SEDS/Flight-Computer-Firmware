@@ -8,7 +8,7 @@
 #include "scheduler.hpp"
 
 #define LOG_BUF_SIZE (PRELOG_MS / KALMAN_PERIOD)
-#define LOG_WRITE_BUF_SIZE (sizeof(LogMessage) * 32)
+#define LOG_WRITE_BUF_SIZE (sizeof(LogMessage) * LOG_BUF_SIZE)
 
 void log_step();
 void log_print_msg(const LogMessage &msg);
@@ -28,7 +28,7 @@ void log_setup()
 	flight_num = EEPROM.read(EEPROM_FLIGHT);
 	current_page = FLASH_FLIGHT_SIZE * flight_num;
 
-	scheduler_add(TaskId::LogFlush, Task(log_step, 100'000L, 30'000L, 2'000'000L));
+	scheduler_add(TaskId::LogFlush, Task(log_step, 100'000L, 30'000L, 250'000L));
 }
 
 void log_start()
@@ -62,13 +62,9 @@ void log_step()
 	}
 
 	// Write messages from write buffer
-	if (flash_busy()) {
-		return;
-	}
-
 	uint8_t page[FLASH_PAGE_SIZE];
 	while (write_buf.pop(page, FLASH_PAGE_SIZE)) {
-		if (written_pages > FLASH_FLIGHT_SIZE) {
+		if (written_pages > FLASH_FLIGHT_SIZE || flash_busy()) {
 			break;
 		}
 
@@ -79,12 +75,12 @@ void log_step()
 			break;
 		}
 
+		// TODO: Wait until not busy
 		flash_write(current_page, page);
 
 		++current_page;
 		++written_pages;
 	}
-	
 }
 
 void log_add(const LogMessage &data)
