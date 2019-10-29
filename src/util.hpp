@@ -113,7 +113,7 @@ bool RingBuffer<T, Cap>::push(const T *data, size_t count, bool overwrite) {
 		return false;
 	}
 	if (count > Cap) {
-		data += Cap - count;
+		data += count - Cap;
 		count = Cap;
 	}
 	if (tail + count > Cap) {
@@ -131,8 +131,8 @@ bool RingBuffer<T, Cap>::push(const T *data, size_t count, bool overwrite) {
 	}
 	tail = wrapping_add(tail, count, Cap);
 	if (size + count > Cap) {
-		// We've advanced past the head, push it past the tail
-		head = wrapping_add(tail, 1, Cap);
+		// We've advanced past the head, set it to the tail
+		head = tail;
 	}
 	size += count;
 	if (size > Cap) {
