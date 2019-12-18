@@ -11,15 +11,12 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <math.h>
-#include <ADC.h>
 
 // Prototypes
 void command_step();
 void blink_step();
 void print_step();
 void deployment_step();
-
-ADC adc;
 
 void setup()
 {
@@ -47,12 +44,6 @@ void setup()
 
 	SPI.setSCK(14);
 	SPI.begin();
-
-	adc.setAveraging(16);
-	adc.setResolution(16);
-	adc.setConversionSpeed(ADC_CONVERSION_SPEED::VERY_LOW_SPEED);
-	adc.setSamplingSpeed(ADC_SAMPLING_SPEED::MED_SPEED);
-	adc.startContinuous(PIN_BATT_V, ADC_0);
 
 	gps_setup();
 	baro_setup();
@@ -216,7 +207,7 @@ void deployment_step()
 		digitalWrite(PIN_MAIN, LOW);
 	}
 
-	uint16_t batt_v = (uint16_t)adc.analogReadContinuous(PIN_BATT_V);
+	uint16_t batt_v = analogRead(PIN_BATT_V);
 	Serial.print("Raw batt V: ");
 	Serial.println(batt_v);
 	batt_v = map(batt_v, BATT_MIN_READING, BATT_FULL_READING, 0, BATT_FULL_VOLTAGE);
