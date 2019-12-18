@@ -25,7 +25,5 @@ void radio_send(const Packet &pkt)
 void radio_setup()
 {
 	xbee_serial.begin(115200);
-	xbee_serial.attachCts(PIN_XBEE_RTS);
-	xbee_serial.attachRts(PIN_XBEE_CTS);
 	scheduler_add(TaskId::PacketSync, Task(radio_sync, 20 * KALMAN_PERIOD * 1000L));
 }

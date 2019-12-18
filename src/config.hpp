@@ -71,12 +71,6 @@
 
 #define EEPROM_FLIGHT 0
 
-// These are from the perspective of the XBee module. i.e. PIN_XBEE_CTS is the Teensy's RTS pin and is connected to the XBee's CTS pin.
-// Any digital pin.
-#define PIN_XBEE_CTS 22
-// Must be 23 for Serial2 (The Teensy only supports CTS on pin 23 for Serial2).
-#define PIN_XBEE_RTS 23
-
 #define GPS_UPDATE_RATE 5
 
 // Standard gravity in m/s^2
