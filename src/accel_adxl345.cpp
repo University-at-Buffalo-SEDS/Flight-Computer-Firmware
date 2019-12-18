@@ -20,16 +20,16 @@ void accel_step();
 static void write_reg(uint8_t reg, uint8_t data)
 {
 	digitalWrite(PIN_ADXL345_CS, LOW);
-	SPI1.transfer(reg);
-	SPI1.transfer(data);
+	SPI.transfer(reg);
+	SPI.transfer(data);
 	digitalWrite(PIN_ADXL345_CS, HIGH);
 }
 
 static uint8_t read_reg(uint8_t reg)
 {
 	digitalWrite(PIN_ADXL345_CS, LOW);
-	SPI1.transfer(reg | 0x80);
-	uint8_t res = SPI1.transfer(0);
+	SPI.transfer(reg | 0x80);
+	uint8_t res = SPI.transfer(0);
 	digitalWrite(PIN_ADXL345_CS, HIGH);
 	return res;
 }
@@ -37,9 +37,9 @@ static uint8_t read_reg(uint8_t reg)
 static void read_buf(uint8_t reg, uint8_t *data, uint8_t length)
 {
 	digitalWrite(PIN_ADXL345_CS, LOW);
-	SPI1.transfer(reg | 0x80 | 0x40);
+	SPI.transfer(reg | 0x80 | 0x40);
 	for (uint8_t i = 0; i < length; ++i) {
-		data[i] = SPI1.transfer(0);
+		data[i] = SPI.transfer(0);
 	}
 	digitalWrite(PIN_ADXL345_CS, HIGH);
 }
@@ -85,10 +85,7 @@ void accel_setup()
 	pinMode(PIN_ADXL345_CS, OUTPUT);
 	digitalWrite(PIN_ADXL345_CS, HIGH);
 
-	SPI1.setMISO(5);
-	SPI1.setMOSI(21);
-	SPI1.begin();
-	SPI1.beginTransaction(spi_settings);
+	SPI.beginTransaction(spi_settings);
 
 	if (read_reg(ADXL345_REG_DEVID) != 0xE5) {
 		Serial.println(F("ADXL345 not found!"));
@@ -106,10 +103,10 @@ void accel_setup()
 #if ADXL345_USE_INT
 	write_reg(ADXL345_REG_INT_MAP, 0b0000'0000); // All interrupts to INT1
 	write_reg(ADXL345_REG_INT_ENABLE, 0b1000'0000); // Enable data ready interrupt
-	SPI1.endTransaction();
+	SPI.endTransaction();
 	attachInterrupt(digitalPinToInterrupt(PIN_ADXL345_INT), accel_step, FALLING);
 #else
-	SPI1.endTransaction();
+	SPI.endTransaction();
 	scheduler_add(TaskId::Accel, Task(accel_step, KALMAN_PERIOD * 1000L));
 #endif
 
@@ -120,9 +117,9 @@ void accel_setup()
 void accel_step()
 {
 	uint8_t data[6];
-	SPI1.beginTransaction(spi_settings);
+	SPI.beginTransaction(spi_settings);
 	read_buf(ADXL345_REG_DATAX0, data, sizeof(data));
-	SPI1.endTransaction();
+	SPI.endTransaction();
 
 	int16_t raw_x = (int16_t)word(data[1], data[0]);
 	int16_t raw_y = (int16_t)word(data[3], data[2]);
