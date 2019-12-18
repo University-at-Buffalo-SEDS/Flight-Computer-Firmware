@@ -41,7 +41,7 @@ bool flash_busy()
 	return busy;
 }
 
-void flash_write(size_t page_addr, uint8_t page[FLASH_PAGE_SIZE])
+void flash_write(size_t page_addr, uint8_t page[FLIGHT_FLASH_PAGE_SIZE])
 {
 	flash_write_enable();
 	spi_begin();
@@ -51,7 +51,7 @@ void flash_write(size_t page_addr, uint8_t page[FLASH_PAGE_SIZE])
 	SPI.transfer(page_addr & 0xFF);
 	SPI.transfer(0x00);
 
-	for (size_t i = 0; i < FLASH_PAGE_SIZE; ++i) {
+	for (size_t i = 0; i < FLIGHT_FLASH_PAGE_SIZE; ++i) {
 		SPI.transfer(page[i]);
 	}
 
@@ -66,14 +66,14 @@ void flash_write(size_t page_addr, uint8_t page[FLASH_PAGE_SIZE])
 	SPI.transfer(0x00);
 	SPI.transfer(0x00);
 
-	for (size_t i = 0; i < FLASH_PAGE_SIZE; ++i) {
+	for (size_t i = 0; i < FLIGHT_FLASH_PAGE_SIZE; ++i) {
 		assert(page[i] == SPI.transfer(0x00));
 	}
 
 	spi_end();
 }
 
-void flash_read(size_t page_addr, uint8_t page[FLASH_PAGE_SIZE])
+void flash_read(size_t page_addr, uint8_t page[FLIGHT_FLASH_PAGE_SIZE])
 {
 	flash_write_enable();
 	spi_begin();
@@ -84,7 +84,7 @@ void flash_read(size_t page_addr, uint8_t page[FLASH_PAGE_SIZE])
 	SPI.transfer(0x00);
 	SPI.transfer(0x00);
 
-	for (size_t i = 0; i < FLASH_PAGE_SIZE; ++i) {
+	for (size_t i = 0; i < FLIGHT_FLASH_PAGE_SIZE; ++i) {
 		page[i] = SPI.transfer(0x00);
 	}
 

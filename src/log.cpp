@@ -26,7 +26,7 @@ void log_setup()
 	flash_setup();
 
 	flight_num = EEPROM.read(EEPROM_FLIGHT);
-	current_page = FLASH_FLIGHT_SIZE * flight_num;
+	current_page = FLIGHT_FLASH_FLIGHT_SIZE * flight_num;
 
 	scheduler_add(TaskId::LogFlush, Task(log_step, 100'000L, 30'000L, 250'000L));
 }
@@ -35,7 +35,7 @@ void log_start()
 {
 	write_enabled = true;
 	// Flight started, advance to next flight.
-	EEPROM.write(EEPROM_FLIGHT, wrapping_add(flight_num, 1, FLASH_FLIGHTS));
+	EEPROM.write(EEPROM_FLIGHT, wrapping_add(flight_num, 1, FLIGHT_FLASH_FLIGHTS));
 	// Run one step to move records from the log buffer to the write buffer
 	// and start the first erase operation.
 	log_step();
@@ -50,7 +50,7 @@ void log_step()
 {
 	// Don't do anything if we haven't started flight yet
 	// or if we've run out of storage space.
-	if (!write_enabled || written_pages > FLASH_FLIGHT_SIZE) {
+	if (!write_enabled || written_pages > FLIGHT_FLASH_FLIGHT_SIZE) {
 		return;
 	}
 
@@ -64,11 +64,11 @@ void log_step()
 	// Write messages from write buffer
 	uint8_t page[FLASH_PAGE_SIZE];
 	while (write_buf.pop(page, FLASH_PAGE_SIZE)) {
-		if (written_pages > FLASH_FLIGHT_SIZE || flash_busy()) {
+		if (written_pages > FLIGHT_FLASH_FLIGHT_SIZE || flash_busy()) {
 			break;
 		}
 
-		if (current_page % FLASH_PAGES_PER_BLOCK == 0) {
+		if (current_page % FLIGHT_FLASH_PAGES_PER_BLOCK == 0) {
 			// Current page is in the next block.
 			// Erase it first.
 			flash_erase(current_page);
@@ -102,13 +102,13 @@ void log_print()
 	LogMessage msg;
 	uint32_t last_time = 0;
 
-	for (size_t flight_i = 0; flight_i < FLASH_FLIGHTS; ++flight_i) {
+	for (size_t flight_i = 0; flight_i < FLIGHT_FLASH_FLIGHTS; ++flight_i) {
 		RingBuffer<uint8_t, LOG_WRITE_BUF_SIZE> read_buf;
-		uint8_t flight = wrapping_add(first_flight, flight_i, FLASH_FLIGHTS);
-		size_t flight_addr = FLASH_FLIGHT_SIZE * flight;
+		uint8_t flight = wrapping_add(first_flight, flight_i, FLIGHT_FLASH_FLIGHTS);
+		size_t flight_addr = FLIGHT_FLASH_FLIGHT_SIZE * flight;
 		bool flight_done = false;
 
-		for (size_t page_i = 0; page_i < FLASH_FLIGHT_SIZE; ++page_i) {
+		for (size_t page_i = 0; page_i < FLIGHT_FLASH_FLIGHT_SIZE; ++page_i) {
 			flash_read(flight_addr + page_i, page);
 
 			if (!read_buf.push(page, FLASH_PAGE_SIZE, false)) {
