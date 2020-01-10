@@ -23,9 +23,20 @@ enum class TaskId : uint8_t {
 class Task {
 public:
 	Task(SchedCb cb, uint32_t period_us, uint32_t time_requirement_us = 0, uint32_t max_delta_us = 0xFFFFFFFFL) :
-		callback(cb), last_run_us(0), period_us(period_us),
-		time_requirement_us(time_requirement_us), max_delta_us(max_delta_us) {}
-	Task() : callback(nullptr) {}
+		callback(cb),
+		last_run_us(0),
+		period_us(period_us),
+		time_requirement_us(time_requirement_us),
+		max_delta_us(max_delta_us)
+	{}
+
+	Task() :
+		callback(nullptr),
+		last_run_us(0),
+		period_us(0),
+		time_requirement_us(0),
+		max_delta_us(0)
+	{}
 
 	SchedCb callback;
 	uint32_t last_run_us, period_us, time_requirement_us, max_delta_us;

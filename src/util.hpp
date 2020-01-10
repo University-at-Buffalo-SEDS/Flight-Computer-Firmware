@@ -48,7 +48,7 @@ class RingBuffer {
 	T buf[Cap];
 
 public:
-	RingBuffer() : head(0), tail(0), size(0) {}
+	RingBuffer() : head(0), tail(0), size(0), buf() {}
 
 	size_t available() { return Cap - size; }
 	size_t used() { return size; }
