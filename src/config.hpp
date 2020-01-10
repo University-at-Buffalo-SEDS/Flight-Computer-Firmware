@@ -61,13 +61,13 @@
 // Number of milliseconds of log data write out from before launch is detected.
 #define PRELOG_MS 2000
 
-#define PIN_ADXL345_CS 24
-#define PIN_BMP280_CS 25
-#define PIN_FLASH_CS 29
-#define PIN_LAUNCH 26
-#define PIN_DROGUE 27
-#define PIN_MAIN 28
-#define PIN_BATT_V A1
+#define PIN_ADXL345_CS PA8
+#define PIN_BMP280_CS PA9
+#define PIN_FLASH_CS PB11
+//#define PIN_LAUNCH
+#define PIN_DROGUE PC0
+#define PIN_MAIN PC1
+#define PIN_BATT_V A0
 
 #define EEPROM_FLIGHT 0
 

@@ -34,7 +34,7 @@ void setup()
 	pinMode(LED_BUILTIN, OUTPUT);
 	digitalWrite(LED_BUILTIN, HIGH);
 
-	pinMode(PIN_BATT_V, INPUT);
+	pinMode(PIN_BATT_V, INPUT_ANALOG);
 
 	Serial.begin(1'000'000);
 	//while (!Serial) delay(1);
