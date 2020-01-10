@@ -41,7 +41,7 @@
 //#define KALMAN_GAINS 0, 0, 0, 0, 0, 0
 
 // We need to have enough samples that a launch event will be detected
-// before this overflows.  The default value coresponds to one second'
+// before this overflows.  The default value coresponds to one second
 // worth of samples.  With the double delay this means that the estimate
 // will have a 1-2 second delay.
 #define DELAYED_EST_SAMPLES (1000/KALMAN_PERIOD)
