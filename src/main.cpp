@@ -42,7 +42,6 @@ void setup()
 
 	Wire.begin();
 
-	SPI.setSCK(14);
 	SPI.begin();
 
 	gps_setup();
