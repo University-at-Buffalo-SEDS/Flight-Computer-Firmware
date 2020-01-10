@@ -31,7 +31,7 @@ public:
 	uint32_t last_run_us, period_us, time_requirement_us, max_delta_us;
 };
 
-void scheduler_add(TaskId tid, Task task);
+void scheduler_add(TaskId tid, const Task &task);
 
 // Runs scheduled tasks.  Returns the micros time when the next task is scheduled.
 uint32_t scheduler();

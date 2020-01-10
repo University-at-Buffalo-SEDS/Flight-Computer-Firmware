@@ -4,7 +4,7 @@
 
 static Task tasks[(int)TaskId::Count];
 
-void scheduler_add(TaskId tid, Task task)
+void scheduler_add(TaskId tid, const Task &task)
 {
 	tasks[(uint8_t)tid] = task;
 }
