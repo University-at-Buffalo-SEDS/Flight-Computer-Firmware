@@ -26,8 +26,10 @@ void setup()
 	pinMode(PIN_MAIN, OUTPUT);
 	digitalWrite(PIN_MAIN, LOW);
 
+#ifdef PIN_LAUNCH
 	pinMode(PIN_LAUNCH, OUTPUT);
 	digitalWrite(PIN_LAUNCH, LOW);
+#endif
 
 	pinMode(LED_BUILTIN, OUTPUT);
 	digitalWrite(LED_BUILTIN, HIGH);
@@ -139,7 +141,9 @@ void deployment_step()
 		// Detect launch
 		if (state->rate > LAUNCH_VELOCITY && state->accel > LAUNCH_ACCEL) {
 			phase = FlightPhase::Launched;
+#ifdef PIN_LAUNCH
 			digitalWrite(PIN_LAUNCH, HIGH);
+#endif
 #if LOG_ENABLE
 			log_start();
 #endif
