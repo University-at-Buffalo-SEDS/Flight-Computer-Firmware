@@ -8,8 +8,8 @@
 
 // State transition matrix
 static kfloat_t phi[3][3] = {
-	1, KALMAN_PERIOD / 1000., ((float)KALMAN_PERIOD * KALMAN_PERIOD) / 2000000.,
-	0, 1, KALMAN_PERIOD / 1000.,
+	1, KALMAN_PERIOD / 1000.0f, ((float)KALMAN_PERIOD * KALMAN_PERIOD) / 2000000.0f,
+	0, 1, KALMAN_PERIOD / 1000.0f,
 	0, 0, 1};
 
 #ifdef KALMAN_GAINS
@@ -28,7 +28,7 @@ static kfloat_t kgain[3][2] = {0, 0, 0, 0, 0, 0};
 // Calculates Kalman gains
 void kalman_setup()
 {
-	kfloat_t dt = KALMAN_PERIOD / 1000.;
+	kfloat_t dt = KALMAN_PERIOD / 1000.0f;
 	// Fill in state transition matrix and its transpose.
 	// Transpose of phi
 	static kfloat_t phit[3][3] = {
@@ -37,10 +37,10 @@ void kalman_setup()
 		0, 0, 1};
 	phi[0][1] = dt;
 	phi[1][2] = dt;
-	phi[0][2] = dt*dt/2.0;
+	phi[0][2] = dt * dt / 2.0f;
 	phit[1][0] = dt;
 	phit[2][1] = dt;
-	phit[2][0] = dt*dt/2.0;
+	phit[2][0] = dt * dt / 2.0f;
 	// Compute the Kalman gain matrix.
 	static kfloat_t lastkgain[3][2];
 	for (uint8_t i = 0; i < 3; i++) {
@@ -87,21 +87,21 @@ void kalman_setup()
 		kgain[1][1] = (pestp[1][0] * (-pestp[0][2]) + pestp[1][2] * (pestp[0][0] + ALTITUDE_VARIANCE)) / det;
 		kgain[2][0] = (pestp[2][0] * (pestp[2][2] + ACCELERATION_VARIANCE) - pestp[2][2] * pestp[2][0]) / det;
 		kgain[2][1] = (pestp[2][0] * (-pestp[0][2]) + pestp[2][2] * (pestp[0][0] + ALTITUDE_VARIANCE)) / det;
-		pest[0][0] = pestp[0][0] * (1.0 - kgain[0][0]) - kgain[0][1] * pestp[2][0];
-		pest[0][1] = pestp[0][1] * (1.0 - kgain[0][0]) - kgain[0][1] * pestp[2][1];
-		pest[0][2] = pestp[0][2] * (1.0 - kgain[0][0]) - kgain[0][1] * pestp[2][2];
+		pest[0][0] = pestp[0][0] * (1.0f - kgain[0][0]) - kgain[0][1] * pestp[2][0];
+		pest[0][1] = pestp[0][1] * (1.0f - kgain[0][0]) - kgain[0][1] * pestp[2][1];
+		pest[0][2] = pestp[0][2] * (1.0f - kgain[0][0]) - kgain[0][1] * pestp[2][2];
 		pest[1][0] = pestp[0][0] * (-kgain[1][0]) + pestp[1][0] - kgain[1][1] * pestp[2][0];
 		pest[1][1] = pestp[0][1] * (-kgain[1][0]) + pestp[1][1] - kgain[1][1] * pestp[2][1];
 		pest[1][2] = pestp[0][2] * (-kgain[1][0]) + pestp[1][2] - kgain[1][1] * pestp[2][2];
-		pest[2][0] = (1.0 - kgain[2][1]) * pestp[2][0] - kgain[2][0] * pestp[2][0];
-		pest[2][1] = (1.0 - kgain[2][1]) * pestp[2][1] - kgain[2][0] * pestp[2][1];
-		pest[2][2] = (1.0 - kgain[2][1]) * pestp[2][2] - kgain[2][0] * pestp[2][2];
+		pest[2][0] = (1.0f - kgain[2][1]) * pestp[2][0] - kgain[2][0] * pestp[2][0];
+		pest[2][1] = (1.0f - kgain[2][1]) * pestp[2][1] - kgain[2][0] * pestp[2][1];
+		pest[2][2] = (1.0f - kgain[2][1]) * pestp[2][2] - kgain[2][0] * pestp[2][2];
 		// Check for convergance. Criteria is less than .001% change from last time through the mill.
 		uint8_t not_done = 0;
 		++iterations;
 		for (uint8_t i = 0; i < 3; i++) {
 			for (uint8_t j = 0; j < 2; j++) {
-				if ((kgain[i][j] - lastkgain[i][j])/lastkgain[i][j] > 0.00001) {
+				if ((kgain[i][j] - lastkgain[i][j])/lastkgain[i][j] > 0.00001f) {
 					not_done++;
 				}
 				lastkgain[i][j] = kgain[i][j];

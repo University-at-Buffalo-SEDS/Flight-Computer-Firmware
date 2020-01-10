@@ -116,7 +116,7 @@ void gps_print()
 		Serial.print(gps.longitudeDegrees, 4);
 
 		Serial.print(F("; Speed: "));
-		Serial.print(gps.speed * 0.514444444444446);  // Convert knots to m/s
+		Serial.print(gps.speed * 0.514444444444446f);  // Convert knots to m/s
 		Serial.print(F("m/s; Course: "));
 		Serial.print(gps.angle);
 		Serial.print(F("deg; Altitude: "));

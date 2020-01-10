@@ -30,12 +30,12 @@
 
 // Noise values for Kalman filter.  These should be rounded up a bit.
 // Standard deviation of altimiter noise in m
-//#define ALTITUDE_SIGMA 1.5  // For MPL3115A2
-#define ALTITUDE_SIGMA 1  // For BMP280.  Note: actual value is about 0.16
+//#define ALTITUDE_SIGMA 1.5f  // For MPL3115A2
+#define ALTITUDE_SIGMA 1.0f  // For BMP280.  Note: actual value is about 0.16
 // Standard deviation of accelerometer noise in m/s^2
-#define ACCELERATION_SIGMA 1  // For LSM9DS0 and ADXL345  Note: actual value is about 0.05.
+#define ACCELERATION_SIGMA 1.0f  // For LSM9DS0 and ADXL345  Note: actual value is about 0.05.
 // Standard deviation of model noise in m/s^2
-#define MODEL_SIGMA 0.2
+#define MODEL_SIGMA 0.2f
 
 // Precomputed Kalman gains.  Reduces startup time, but must be recomputed for every change of the parameters.
 //#define KALMAN_GAINS 0, 0, 0, 0, 0, 0
@@ -47,7 +47,7 @@
 #define DELAYED_EST_SAMPLES (1000/KALMAN_PERIOD)
 
 // Altitude at which the main parachute should be deployed, in meters.
-#define MAIN_DEPLOY_ALTITUDE 381  // 1250ft
+#define MAIN_DEPLOY_ALTITUDE 381.0f  // 1250ft
 
 // Battery voltage level reading configuration.
 // TODO: Better numbers for these.
@@ -74,6 +74,6 @@
 #define GPS_UPDATE_RATE 5
 
 // Standard gravity in m/s^2
-#define STANDARD_GRAVITY 9.80665
+#define STANDARD_GRAVITY 9.80665f
 
 #define DEBUG 0

@@ -75,7 +75,7 @@ static void read_buf(uint8_t reg, uint8_t *data, uint8_t length)
 #define ADXL345_REG_FIFO_CTL            (0x38)    // FIFO control
 #define ADXL345_REG_FIFO_STATUS         (0x39)    // FIFO status
 
-#define ADXL345_FULL_SCALE_MULTIPLIER ((2 * 2) / 1024.)
+#define ADXL345_FULL_SCALE_MULTIPLIER ((2 * 2) / 1024.0f)
 
 void accel_setup()
 {
