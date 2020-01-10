@@ -20,7 +20,6 @@ void deployment_step();
 
 void setup()
 {
-
 	pinMode(PIN_DROGUE, OUTPUT);
 	digitalWrite(PIN_DROGUE, LOW);
 
