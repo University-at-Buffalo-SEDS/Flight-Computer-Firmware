@@ -1,13 +1,14 @@
 {
-	"name": "Flight_Computer",
+	"name": "Flight Computer",
 	"vendor": "UB SEDS",
 	"url": "https://www.st.com/en/microcontrollers/stm32f303re.html",
 	"build": {
 		"cpu": "cortex-m4",
-		"extra_flags": "-DSTM32F3 -DSTM32F303xE -DENABLE_HWSERIAL1",
+		"extra_flags": "-DSTM32F3 -DSTM32F303xE",
 		"f_cpu": "72000000L",
 		"mcu": "stm32f303ret6",
-		"variant": "NUCLEO_F303RE"
+		"variant": "flight_computer",
+		"variants_dir": "variants"
 	},
 	"debug": {
 		"default_tools": [
