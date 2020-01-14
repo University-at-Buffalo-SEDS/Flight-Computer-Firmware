@@ -5,40 +5,38 @@
 
 void gps_step();
 
-#define gps_serial Serial1
-
-static Adafruit_GPS gps(&gps_serial);
+static Adafruit_GPS gps(&GPS_SERIAL);
 
 static void gps_read()
 {
-	while (gps_serial.available()) {
+	while (GPS_SERIAL.available()) {
 		gps.read();
 	}
 }
 
 void gps_setup()
 {
-	gps_serial.begin(9600);
+	GPS_SERIAL.begin(9600);
 	delay(10);
 	// We only need RMC and GGA commands
-	gps_serial.println(F(PMTK_SET_NMEA_OUTPUT_RMCGGA));
+	GPS_SERIAL.println(F(PMTK_SET_NMEA_OUTPUT_RMCGGA));
 #if GPS_UPDATE_RATE == 1
 #define GPS_BAUD 9600
-	gps_serial.println(F(PMTK_SET_NMEA_UPDATE_1HZ));
-	gps_serial.println(F(PMTK_API_SET_FIX_CTL_1HZ));
+	GPS_SERIAL.println(F(PMTK_SET_NMEA_UPDATE_1HZ));
+	GPS_SERIAL.println(F(PMTK_API_SET_FIX_CTL_1HZ));
 #elif GPS_UPDATE_RATE == 2
 #define GPS_BAUD 9600
-	gps_serial.println(F(PMTK_SET_NMEA_UPDATE_2HZ));
-	gps_serial.println(F(PMTK_API_SET_FIX_CTL_5HZ));
+	GPS_SERIAL.println(F(PMTK_SET_NMEA_UPDATE_2HZ));
+	GPS_SERIAL.println(F(PMTK_API_SET_FIX_CTL_5HZ));
 #elif GPS_UPDATE_RATE == 5
 #define GPS_BAUD 9600
-	gps_serial.println(F(PMTK_SET_NMEA_UPDATE_5HZ));
-	gps_serial.println(F(PMTK_API_SET_FIX_CTL_5HZ));
+	GPS_SERIAL.println(F(PMTK_SET_NMEA_UPDATE_5HZ));
+	GPS_SERIAL.println(F(PMTK_API_SET_FIX_CTL_5HZ));
 #elif GPS_UPDATE_RATE == 10
 #define GPS_BAUD 57600
 	// Can go up to 10Hz, but only up to 5Hz for actual fixes.
-	gps_serial.println(F(PMTK_SET_NMEA_UPDATE_10HZ));
-	gps_serial.println(F(PMTK_API_SET_FIX_CTL_5HZ));
+	GPS_SERIAL.println(F(PMTK_SET_NMEA_UPDATE_10HZ));
+	GPS_SERIAL.println(F(PMTK_API_SET_FIX_CTL_5HZ));
 #warning "GPS update rate is 10Hz, but fixes will only be obtained at 5Hz."
 #else
 #error "GPS Update speed must be 1, 2, 5, or 10Hz"
@@ -48,20 +46,20 @@ void gps_setup()
 #elif GPS_BAUD == 57600
 	// Need to set this if you use 10Hz updates or enable
 	// more than RMC+GGA at a high update speed.
-	gps_serial.println(F(PMTK_SET_BAUD_57600));
-	gps_serial.begin(57600);
+	GPS_SERIAL.println(F(PMTK_SET_BAUD_57600));
+	GPS_SERIAL.begin(57600);
 #else
 #error "GPS_BAUD can only be 9600 or 57600."
 #endif
 
 	// DGPS: Accuracy improvement measures.
-	gps_serial.println(F(PMTK_ENABLE_SBAS));
-	gps_serial.println(F(PMTK_ENABLE_WAAS));
+	GPS_SERIAL.println(F(PMTK_ENABLE_SBAS));
+	GPS_SERIAL.println(F(PMTK_ENABLE_WAAS));
 
 	delay(1000);
 
 	// Ask for the release and version
-	gps_serial.println(F(PMTK_Q_RELEASE));
+	GPS_SERIAL.println(F(PMTK_Q_RELEASE));
 
 	// This should be fast enough to parse 25-30 NMEA sentences per second.
 	scheduler_add(TaskId::Gps, Task(gps_step, 32'000, 100, 40'000));

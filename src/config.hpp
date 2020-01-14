@@ -69,6 +69,9 @@
 #define PIN_MAIN PC1
 #define PIN_BATT_V A0
 
+#define GPS_SERIAL Serial1
+#define XBEE_SERIAL Serial2
+
 #define EEPROM_FLIGHT 0
 
 #define GPS_UPDATE_RATE 5
