@@ -69,6 +69,10 @@
 #define PIN_MAIN PC1
 #define PIN_BATT_V A0
 
+#define FLIGHT_FLASH_MOSI_PIN PB15
+#define FLIGHT_FLASH_MISO_PIN PB14
+#define FLIGHT_FLASH_SCK_PIN PB13
+
 #define GPS_SERIAL Serial1
 #define XBEE_SERIAL Serial2
 
