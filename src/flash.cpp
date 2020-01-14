@@ -6,7 +6,7 @@
 #include "config.hpp"
 #include "log.hpp"
 
-static const SPISettings spi_settings(100'000'000, MSBFIRST, SPI_MODE0);
+static const SPISettings spi_settings(133'000'000, MSBFIRST, SPI_MODE0);
 
 enum class FlashInstruction : uint8_t {
 	PAGE_PROGRAM = 0x02,
