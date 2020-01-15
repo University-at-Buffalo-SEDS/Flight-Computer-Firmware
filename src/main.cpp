@@ -104,6 +104,7 @@ void deployment_step()
 	static DelayedEstState gravity_est_state;
 	static DelayedEstState ground_level_est_state;
 	static DelayedEstState alt_est_state;
+	static float apogee = 0;
 	float *accel = accel_get();
 	float raw_alt = baro_get_altitude();
 	// Only send telemetry every other step to avoid saturating the link and
@@ -152,6 +153,7 @@ void deployment_step()
 	} else if (phase == FlightPhase::Launched) {
 		// Detect apogee
 		if (state->rate < 0) {
+			apogee = state->pos;
 			drogue_trigger_time = step_time;
 			digitalWrite(PIN_DROGUE, HIGH);
 			phase = FlightPhase::DescendingWithDrogue;
@@ -232,7 +234,7 @@ void deployment_step()
 
 	if (send_now) {
 		radio_send(Packet(phase, step_time, state->pos, state->rate, state->accel,
-				alt, accel_mag, gps_get_lat(), gps_get_lon(),
+				alt, accel_mag, gps_get_lat(), gps_get_lon(), apogee,
 				baro_get_temp(), batt_v));
 	}
 	send_now = !send_now;
