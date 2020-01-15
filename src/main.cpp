@@ -72,11 +72,10 @@ void loop()
 
 void command_step()
 {
-	if (Serial.available()) {
-		String s = Serial.readStringUntil('\n');
-		if (s == "ReadFlights") {
-			log_print();
-		}
+	switch (Serial.read()) {
+	case 'r':
+		log_print();
+		break;
 	}
 }
 
