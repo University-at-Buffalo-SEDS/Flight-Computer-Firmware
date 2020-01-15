@@ -218,7 +218,6 @@ void deployment_step()
 	LogMessage msg {
 		.time_ms = step_time,
 		.state = *state,
-		.temp = baro_get_temp(),
 		.altitude = raw_alt,
 		.accel_x = accel[0],
 		.accel_y = accel[1],
@@ -226,6 +225,7 @@ void deployment_step()
 		.lat = gps_get_lat(),
 		.lon = gps_get_lon(),
 		.gps_alt = gps_get_alt(),
+		.temp = baro_get_temp(),
 		.batt_v = batt_v,
 	};
 	log_add(msg);

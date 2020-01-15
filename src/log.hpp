@@ -5,8 +5,8 @@
 struct LogMessage {
 	uint32_t time_ms;
 	KalmanState state;
-	int32_t temp;
 	float altitude, accel_x, accel_y, accel_z, lat, lon, gps_alt;
+	int16_t temp;
 	uint16_t batt_v;
 	//struct {
 	//	uint16_t year;

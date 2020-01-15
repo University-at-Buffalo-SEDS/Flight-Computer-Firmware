@@ -35,7 +35,7 @@ enum BmpReg : uint8_t {
 static const SPISettings spi_settings(2'000'000, MSBFIRST, SPI_MODE0);
 static float last_press = NAN;
 static float last_alt = NAN;
-static int32_t last_temp = -30000;
+static int16_t last_temp = INT16_MIN;
 
 
 // Returns temperature in DegC, resolution is 0.01 DegC. Output value of "5123" equals 51.23 DegC
@@ -156,7 +156,7 @@ float baro_get_altitude()
 	return last_alt;
 }
 
-int32_t baro_get_temp()
+int16_t baro_get_temp()
 {
 	return last_temp;
 }
