@@ -20,6 +20,7 @@ static bool write_enabled = false;
 static size_t current_page = 0;
 static size_t written_pages = 0;
 static uint8_t flight_num;
+static bool current_block_erased = false;
 
 void log_setup()
 {
@@ -68,14 +69,16 @@ void log_step()
 			break;
 		}
 
-		if (current_page % FLIGHT_FLASH_PAGES_PER_BLOCK == 0) {
+		if (!current_block_erased && current_page % FLIGHT_FLASH_PAGES_PER_BLOCK == 0) {
 			// Current page is in the next block.
 			// Erase it first.
 			flash_erase(current_page);
+			current_block_erased = true;
 			break;
 		}
+		// Clear erased flag
+		current_block_erased = false;
 
-		// TODO: Wait until not busy
 		flash_write(current_page, page);
 
 		++current_page;
