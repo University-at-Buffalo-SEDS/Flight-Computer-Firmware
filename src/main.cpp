@@ -187,7 +187,7 @@ void deployment_step()
 			if (land_time == 0) {
 				land_time = step_time;
 				if (land_time == 0) land_time = 1;
-			} else if (delta(land_time, step_time) > 5000) { // Must stay landed for 5 seconds
+			} else if (delta(land_time, step_time) > LANDED_TIME_MS) { // Must stay landed long enough
 				phase = FlightPhase::Landed;
 				Serial.println(F("===================================== Landed!"));
 				send_now = true;

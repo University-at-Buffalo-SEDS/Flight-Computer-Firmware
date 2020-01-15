@@ -12,10 +12,13 @@
 
 // Altitude and velocity and acceleration below which landing will
 // be detected.  Acceleration is comphensated for gravity.
+// In order to avoid issues with spurious readings, these values must
+// be maintained for at least LANDED_TIME_MS before landing is detected.
 // Descent velocity with main should be about 6 m/s
 #define LANDED_ALT 30
 #define LANDED_VELOCITY 3
 #define LANDED_ACCEL 2
+#define LANDED_TIME_MS 5000
 
 // If the downward velocity goes above this value after drogue
 // deployment then the main will deploy.  This is a failsafe
