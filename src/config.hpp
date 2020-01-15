@@ -16,8 +16,8 @@
 // be maintained for at least LANDED_TIME_MS before landing is detected.
 // Descent velocity with main should be about 6 m/s
 #define LANDED_ALT 30
-#define LANDED_VELOCITY 3
-#define LANDED_ACCEL 2
+#define LANDED_VELOCITY 2
+#define LANDED_ACCEL 1
 #define LANDED_TIME_MS 5000
 
 // If the downward velocity goes above this value after drogue
