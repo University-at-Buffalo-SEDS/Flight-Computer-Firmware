@@ -191,14 +191,13 @@ void deployment_step()
 				phase = FlightPhase::Landed;
 				Serial.println(F("===================================== Landed!"));
 				send_now = true;
+#if LOG_ENABLE
+				log_stop();
+#endif
 			}
 		} else {
 			land_time = 0;
 		}
-	} else if (phase == FlightPhase::Landed) {
-#if LOG_ENABLE
-		log_stop();
-#endif
 	}
 
 	// Disable drogue igniter after 1 second
