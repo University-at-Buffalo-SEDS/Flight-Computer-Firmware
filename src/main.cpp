@@ -76,6 +76,9 @@ void command_step()
 	case 'r':
 		log_print();
 		break;
+	default:
+		Serial.println("Unrecognized command.");
+		break;
 	}
 }
 
