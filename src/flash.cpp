@@ -73,6 +73,7 @@ void flash_write(size_t page_addr, uint8_t page[FLIGHT_FLASH_PAGE_SIZE])
 
 	spi_end();
 
+#ifndef NDEBUG
 	// Validate write
 	spi_begin();
 	FLASH_SPI.transfer((uint8_t)FlashInstruction::FAST_READ);
@@ -87,6 +88,7 @@ void flash_write(size_t page_addr, uint8_t page[FLIGHT_FLASH_PAGE_SIZE])
 	}
 
 	spi_end();
+#endif
 }
 
 void flash_read(size_t page_addr, uint8_t page[FLIGHT_FLASH_PAGE_SIZE])
