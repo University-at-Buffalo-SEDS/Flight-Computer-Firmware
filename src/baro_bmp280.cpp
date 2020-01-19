@@ -107,7 +107,6 @@ static void read_buf(uint8_t reg, uint8_t *buf, uint8_t len)
 	spi_end();
 }
 
-// Takes about 150us
 static void baro_step()
 {
 	uint8_t data[6];
@@ -126,7 +125,7 @@ static void baro_step()
 
 	if (press) {
 		last_press = (int32_t)(press / 256);
-		last_alt = 44330 * (1.0 - pow(last_press / 101325, 0.1903));
+		last_alt = 44330 * (1.0f - powf(last_press / 101325, 0.1903f));
 	}
 	last_temp = temp;
 }
