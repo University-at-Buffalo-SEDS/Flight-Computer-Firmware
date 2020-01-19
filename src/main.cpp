@@ -37,8 +37,7 @@ void setup()
 	pinMode(PIN_BATT_V, INPUT_ANALOG);
 	analogReadResolution(12);  // Enable full resolution
 
-	Serial.begin(1'000'000);
-	//while (!Serial) delay(1);
+	Serial.begin(2'250'000);
 
 	Serial.println(F("Avionics starting!"));
 
