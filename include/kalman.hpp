@@ -1,6 +1,6 @@
 #pragma once
 
-typedef float kfloat_t;
+using kfloat_t = float;
 
 struct KalmanState {
 	kfloat_t pos, rate, accel;

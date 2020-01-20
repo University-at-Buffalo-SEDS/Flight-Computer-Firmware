@@ -18,7 +18,7 @@ struct __attribute__((__packed__)) Packet {
 		temp(temp), batt_v(batt_v), phase(phase)
 	{}
 
-	int getLen() const { return sizeof(Packet); }
+	size_t getLen() const { return sizeof(Packet); }
 };
 
 static_assert(sizeof(Packet) == 41, "Packet size changed.");

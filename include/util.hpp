@@ -1,8 +1,8 @@
 #pragma once
 
-#include <limits.h>
-#include <stdint.h>
-#include <math.h>
+#include <climits>
+#include <cstdint>
+#include <cmath>
 #include "config.hpp"
 #include "kalman.hpp"
 
@@ -90,10 +90,10 @@ bool RingBuffer<T, Cap>::push(const T &val, bool overwrite)
 	if (size < Cap) {
 		++size;
 		return true;
-	} else {
-		head = wrapping_add(head, 1, Cap);
-		return false;
 	}
+
+	head = wrapping_add(head, 1, Cap);
+	return false;
 }
 
 template <typename T, unsigned int Cap>
@@ -138,9 +138,8 @@ bool RingBuffer<T, Cap>::push(const T *data, size_t count, bool overwrite) {
 	if (size > Cap) {
 		size = Cap;
 		return false;
-	} else {
-		return true;
 	}
+	return true;
 }
 
 template <typename T, unsigned int Cap>

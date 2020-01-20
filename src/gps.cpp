@@ -85,23 +85,37 @@ void gps_print()
 	Serial.print('[');
 	Serial.print(gps.year);
 	Serial.print('-');
-	if (gps.month < 10) Serial.print('0');
+	if (gps.month < 10) {
+		Serial.print('0');
+	}
 	Serial.print(gps.month);
 	Serial.print('-');
-	if (gps.day < 10) Serial.print('0');
+	if (gps.day < 10) {
+		Serial.print('0');
+	}
 	Serial.print(gps.day);
 	Serial.print('T');
-	if (gps.hour < 10) Serial.print('0');
+	if (gps.hour < 10) {
+		Serial.print('0');
+	}
 	Serial.print(gps.hour);
 	Serial.print(':');
-	if (gps.minute < 10) Serial.print('0');
+	if (gps.minute < 10) {
+		Serial.print('0');
+	}
 	Serial.print(gps.minute);
 	Serial.print(':');
-	if (gps.seconds < 10) Serial.print('0');
+	if (gps.seconds < 10) {
+		Serial.print('0');
+	}
 	Serial.print(gps.seconds);
 	Serial.print('.');
-	if (gps.milliseconds < 100) Serial.print('0');
-	if (gps.milliseconds < 10) Serial.print('0');
+	if (gps.milliseconds < 100) {
+		Serial.print('0');
+	}
+	if (gps.milliseconds < 10) {
+		Serial.print('0');
+	}
 	Serial.print(gps.milliseconds);
 	Serial.print(F("] "));
 

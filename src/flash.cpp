@@ -52,7 +52,7 @@ bool flash_busy()
 {
 	spi_begin();
 	FLASH_SPI.transfer((uint8_t)FlashInstruction::READ_STATUS_REGISTER_1);
-	bool busy = SPI.transfer(0) & 0x01;
+	bool busy = (bool)(SPI.transfer(0) & 0x01);
 	spi_end();
 	return busy;
 }

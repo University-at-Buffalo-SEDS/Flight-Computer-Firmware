@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <SPI.h>
-#include <math.h>
+#include <cmath>
 #include "util.hpp"
 #include "baro.hpp"
 #include "scheduler.hpp"
@@ -58,8 +58,9 @@ static uint32_t compensate_press(int32_t adc_P)
 	var2 = var2 + (((int64_t)calib.dig_P4) << 35);
 	var1 = ((var1 * var1 * (int64_t)calib.dig_P3) >> 8) + ((var1 * (int64_t)calib.dig_P2) << 12);
 	var1 = (((((int64_t)1) << 47) + var1)) * ((int64_t)calib.dig_P1) >> 33;
-	if (var1 == 0)
+	if (var1 == 0) {
 		return 0;
+	}
 	int64_t p = 1048576 - adc_P;
 	p = (((p << 31) - var2) * 3125) / var1;
 	var1 = (((int64_t)calib.dig_P9) * (p >> 13) * (p >> 13)) >> 25;
@@ -123,7 +124,7 @@ static void baro_step()
 	int32_t temp = compensate_temp(uncomp_t);
 	uint32_t press = compensate_press(uncomp_p);
 
-	if (press) {
+	if (press != 0) {
 		last_press = (int32_t)(press / 256);
 		last_alt = 44330 * (1.0f - powf(last_press / 101325, 0.1903f));
 	}
@@ -137,7 +138,7 @@ void baro_setup()
 
 	if (read8(REG_CHIPID) != BMP280_CHIPID) {
 		Serial.println(F("Failed to set up BMP280!"));
-		while (1) delay(1);
+		while (true) { delay(1); }
 	} else {
 		Serial.println(F("BMP280 detected."));
 	}

@@ -10,7 +10,7 @@
 
 #include <Wire.h>
 #include <SPI.h>
-#include <math.h>
+#include <cmath>
 
 // Prototypes
 void command_step();
@@ -83,8 +83,8 @@ void command_step()
 
 void blink_step()
 {
-	static bool on = 0;
-	digitalWrite(LED_BUILTIN, on);
+	static bool on = false;
+	digitalWrite(LED_BUILTIN, on ? HIGH : LOW);
 	on = !on;
 }
 
@@ -120,7 +120,7 @@ void deployment_step()
 		return;
 	}
 
-	kfloat_t accel_mag = sqrt(accel[0] * accel[0] + accel[1] * accel[1] + accel[2] * accel[2]);
+	kfloat_t accel_mag = sqrtf(accel[0] * accel[0] + accel[1] * accel[1] + accel[2] * accel[2]);
 
 	if (phase < FlightPhase::Launched) {
 		calc_delayed_est(gravity_est_state, accel_mag);
@@ -189,7 +189,9 @@ void deployment_step()
 				abs(state->accel) < LANDED_ACCEL) {
 			if (land_time == 0) {
 				land_time = step_time;
-				if (land_time == 0) land_time = 1;
+				if (land_time == 0) {
+					land_time = 1;
+				}
 			} else if (delta(land_time, step_time) > LANDED_TIME_MS) { // Must stay landed long enough
 				phase = FlightPhase::Landed;
 				Serial.println(F("===================================== Landed!"));

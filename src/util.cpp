@@ -8,7 +8,7 @@ void calc_delayed_est(DelayedEstState &state, kfloat_t reading)
 		state.count = 1;
 	}
 	// Compute a running average
-	state.est *= (float)state.count / (state.count + 1);
-	state.est += reading / (state.count + 1);
+	state.est *= (float)state.count / (float)(state.count + 1);
+	state.est += reading / (float)(state.count + 1);
 	state.count += 1;
 }

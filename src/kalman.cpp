@@ -1,6 +1,6 @@
 // Based on http://home.earthlink.net/~david.schultz/rnd/2004/KalmanApogeeII.pdf
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <Arduino.h>
 #include "kalman.hpp"
 #include "config.hpp"
@@ -107,9 +107,7 @@ void kalman_setup()
 				lastkgain[i][j] = kgain[i][j];
 			}
 		}
-		if (not_done > 0) {
-			continue;
-		} else {
+		if (not_done == 0) {
 			break;
 		}
 	}
@@ -117,13 +115,13 @@ void kalman_setup()
 	DEBUG_SECTION(
 		Serial.println(F("Input noise values used (standard deviation):"));
 		Serial.print(F("Altitude       - "));
-		Serial.print(sqrt(ALTITUDE_VARIANCE));
+		Serial.print(sqrtf(ALTITUDE_VARIANCE));
 		Serial.println(F("m"));
 		Serial.print(F("Acceleration   - "));
-		Serial.print(sqrt(ACCELERATION_VARIANCE));
+		Serial.print(sqrtf(ACCELERATION_VARIANCE));
 		Serial.println(F("m/s^2"));
 		Serial.print(F("Model noise    - "));
-		Serial.print(sqrt(MODEL_VARIANCE));
+		Serial.print(sqrtf(MODEL_VARIANCE));
 		Serial.println(F("m/s^2"));
 		Serial.print(F("Kalman gains converged after "));
 		Serial.print(iterations);
@@ -138,13 +136,13 @@ void kalman_setup()
 		Serial.println(F("\n"));
 		Serial.println(F("Estimated output first order statistics (standard deviation):"));
 		Serial.print(F("Altitude     - "));
-		Serial.print(sqrt(pest[0][0]));
+		Serial.print(sqrtf(pest[0][0]));
 		Serial.println(F("m"));
 		Serial.print(F("Velocity     - "));
-		Serial.print(sqrt(pest[1][1]));
+		Serial.print(sqrtf(pest[1][1]));
 		Serial.println(F("m/s"));
 		Serial.print(F("Acceleration - "));
-		Serial.print(sqrt(pest[2][2]));
+		Serial.print(sqrtf(pest[2][2]));
 		Serial.println(F("m/s^2"));
 		// Output header for data.
 		Serial.println(F("Time		Pressure	Acceleration	Est Pos		Est Rate	Est Accel"));

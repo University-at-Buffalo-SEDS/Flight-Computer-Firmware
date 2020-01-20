@@ -89,7 +89,7 @@ void accel_setup()
 
 	if (read_reg(ADXL345_REG_DEVID) != 0xE5) {
 		Serial.println(F("ADXL345 not found!"));
-		while (1) delay(1);
+		while (true) { delay(1); }
 	} else {
 		Serial.println(F("ADXL345 detected."));
 	}
@@ -121,12 +121,12 @@ void accel_step()
 	read_buf(ADXL345_REG_DATAX0, data, sizeof(data));
 	SPI.endTransaction();
 
-	int16_t raw_x = (int16_t)word(data[1], data[0]);
-	int16_t raw_y = (int16_t)word(data[3], data[2]);
-	int16_t raw_z = (int16_t)word(data[5], data[4]);
-	last_accel[0] = raw_x * ADXL345_FULL_SCALE_MULTIPLIER * STANDARD_GRAVITY;
-	last_accel[1] = raw_y * ADXL345_FULL_SCALE_MULTIPLIER * STANDARD_GRAVITY;
-	last_accel[2] = raw_z * ADXL345_FULL_SCALE_MULTIPLIER * STANDARD_GRAVITY;
+	int16_t raw_x = word(data[1], data[0]);
+	int16_t raw_y = word(data[3], data[2]);
+	int16_t raw_z = word(data[5], data[4]);
+	last_accel[0] = (float)raw_x * ADXL345_FULL_SCALE_MULTIPLIER * STANDARD_GRAVITY;
+	last_accel[1] = (float)raw_y * ADXL345_FULL_SCALE_MULTIPLIER * STANDARD_GRAVITY;
+	last_accel[2] = (float)raw_z * ADXL345_FULL_SCALE_MULTIPLIER * STANDARD_GRAVITY;
 }
 
 // Returned values must be in m/s^2
@@ -144,6 +144,6 @@ void accel_print()
 	Serial.print(F(", "));
 	Serial.print(a[2]);
 	Serial.print(F(" ("));
-	Serial.print(sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]));
+	Serial.print(sqrtf(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]));
 	Serial.println(F(") m/s^2"));
 }
