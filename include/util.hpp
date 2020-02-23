@@ -6,6 +6,32 @@
 #include "config.hpp"
 #include "kalman.hpp"
 
+#if DEBUG
+#define DEBUG_SECTION(x) x
+#else
+#define DEBUG_SECTION(x)
+#endif
+
+#define ROUND_UP_ALIGN(type, len) ((len) + alignof(type) - 1) & ~(alignof(type) - 1)
+
+template<typename S>
+inline static uint8_t struct_checksum(const S &val)
+{
+	uint8_t checksum = 0;
+
+	constexpr size_t size_if_checksum_last = ROUND_UP_ALIGN(S,
+			offsetof(S, checksum) + sizeof(S::checksum));
+	static_assert(sizeof(S) == size_if_checksum_last,
+			"Checksum must be last field in struct!");
+	static_assert(sizeof(S::checksum) == 1, "Checksums must be 8 bits.");
+
+	// Don't include checksum field in calculation of checksum
+	for (size_t i = 0; i < offsetof(S, checksum); ++i) {
+		checksum ^= reinterpret_cast<const uint8_t *>(&val)[i];
+	}
+	return checksum;
+}
+
 enum class FlightPhase : uint8_t {
 	Startup, // Doing initial setup
 	Idle, // On launchpad, not launched.
@@ -159,9 +185,3 @@ bool RingBuffer<T, Cap>::pop(T *data, size_t count) {
 	head = wrapping_add(head, count, Cap);
 	return true;
 }
-
-#if DEBUG
-#define DEBUG_SECTION(x) x
-#else
-#define DEBUG_SECTION(x)
-#endif

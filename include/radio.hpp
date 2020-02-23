@@ -18,9 +18,7 @@ struct __attribute__((__packed__)) Packet {
 		raw_alt(raw_alt), raw_acc(raw_acc), lat(lat), lon(lon), apogee(apogee),
 		temp(temp), batt_v(batt_v), phase(phase), checksum(0)
 	{
-		for (size_t i = 0; i < getLen() - sizeof(checksum); ++i) {
-			checksum ^= reinterpret_cast<uint8_t *>(this)[i];
-		}
+		checksum = struct_checksum(*this);
 	}
 
 	size_t getLen() const { return sizeof(Packet); }

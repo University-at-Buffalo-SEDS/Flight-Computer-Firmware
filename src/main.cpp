@@ -220,20 +220,19 @@ void deployment_step()
 	batt_v = map(batt_v, BATT_MIN_READING, BATT_FULL_READING, 0, BATT_FULL_VOLTAGE);
 
 #if LOG_ENABLE
-	LogMessage msg {
-		.time_ms = step_time,
-		.state = *state,
-		.altitude = raw_alt,
-		.accel_x = accel[0],
-		.accel_y = accel[1],
-		.accel_z = accel[2],
-		.lat = gps_get_lat(),
-		.lon = gps_get_lon(),
-		.gps_alt = gps_get_alt(),
-		.temp = baro_get_temp(),
-		.batt_v = batt_v,
-	};
-	log_add(msg);
+	log_add(LogMessage(
+		step_time,
+		*state,
+		raw_alt,
+		accel[0],
+		accel[1],
+		accel[2],
+		gps_get_lat(),
+		gps_get_lon(),
+		gps_get_alt(),
+		baro_get_temp(),
+		(uint16_t)batt_v
+	));
 #endif
 
 	if (send_now) {

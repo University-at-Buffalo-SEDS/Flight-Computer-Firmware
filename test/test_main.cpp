@@ -65,10 +65,24 @@ void test_ring_buffer() {
 	TEST_ASSERT(memcmp(temp, "pqrs", 4) == 0);
 }
 
+void test_checksum() {
+	struct {
+		uint32_t val;
+		uint8_t checksum;
+	} test;
+	test.val = 0x42ca52c9;
+	test.checksum = struct_checksum(test);
+
+	TEST_ASSERT_EQUAL_HEX8(0b00010011, test.checksum);
+	// Make sure it doesn't change with a different value in the checksum field
+	TEST_ASSERT_EQUAL_HEX8(test.checksum, struct_checksum(test));
+}
+
 int main() {
 	UNITY_BEGIN();
 
 	RUN_TEST(test_ring_buffer);
+	RUN_TEST(test_checksum);
 
 	UNITY_END();
 	return 0;
