@@ -73,7 +73,7 @@ void test_checksum() {
 	test.val = 0x42ca52c9;
 	test.checksum = struct_checksum(test);
 
-	TEST_ASSERT_EQUAL_HEX8(0b00010011, test.checksum);
+	TEST_ASSERT_EQUAL_HEX8(0x58, test.checksum);
 	// Make sure it doesn't change with a different value in the checksum field
 	TEST_ASSERT_EQUAL_HEX8(test.checksum, struct_checksum(test));
 }

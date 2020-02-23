@@ -2,6 +2,7 @@
 
 #include <climits>
 #include <cstdint>
+#include <cstddef>
 #include <cmath>
 #include "config.hpp"
 #include "kalman.hpp"
@@ -14,22 +15,19 @@
 
 #define ROUND_UP_ALIGN(type, len) ((len) + alignof(type) - 1) & ~(alignof(type) - 1)
 
+uint8_t calc_checksum(const uint8_t *data, size_t len);
+
 template<typename S>
 inline static uint8_t struct_checksum(const S &val)
 {
-	uint8_t checksum = 0;
-
 	constexpr size_t size_if_checksum_last = ROUND_UP_ALIGN(S,
-			offsetof(S, checksum) + sizeof(S::checksum));
+			offsetof(S, S::checksum) + sizeof(S::checksum));
 	static_assert(sizeof(S) == size_if_checksum_last,
 			"Checksum must be last field in struct!");
 	static_assert(sizeof(S::checksum) == 1, "Checksums must be 8 bits.");
 
 	// Don't include checksum field in calculation of checksum
-	for (size_t i = 0; i < offsetof(S, checksum); ++i) {
-		checksum ^= reinterpret_cast<const uint8_t *>(&val)[i];
-	}
-	return checksum;
+	return calc_checksum(reinterpret_cast<const uint8_t *>(&val), offsetof(S, S::checksum));
 }
 
 enum class FlightPhase : uint8_t {
