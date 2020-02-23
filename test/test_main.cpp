@@ -1,7 +1,7 @@
 #include <unity.h>
 #include <cstring>
 #include <cstdio>
-#include "../src/util.hpp"
+#include "util.hpp"
 
 void test_ring_buffer() {
 	RingBuffer<char, 4> buf;
