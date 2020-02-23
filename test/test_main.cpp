@@ -35,7 +35,7 @@ void test_ring_buffer() {
 	// Test pop results after overflow
 	TEST_ASSERT(!buf.pop(temp, 5));
 	TEST_ASSERT(buf.pop(temp, 4));
-	TEST_ASSERT(memcmp(temp, "cdgh", 4) == 0);
+	TEST_ASSERT_EQUAL(0, memcmp(temp, "cdgh", 4));
 	TEST_ASSERT_EQUAL(buf.used(), 0);
 	TEST_ASSERT_EQUAL(buf.available(), 4);
 
@@ -43,13 +43,13 @@ void test_ring_buffer() {
 	TEST_ASSERT(buf.push("ij", 2, false));
 	TEST_ASSERT(!buf.pop(temp, 3));
 	TEST_ASSERT(buf.pop(temp, 2));
-	TEST_ASSERT(memcmp(temp, "ij", 2) == 0);
+	TEST_ASSERT_EQUAL(0, memcmp(temp, "ij", 2));
 
 	// Test push with array larger than size
 	TEST_ASSERT(buf.push("klmno", 5, true));
 	TEST_ASSERT(!buf.pop(temp, 5));
 	TEST_ASSERT(buf.pop(temp, 4));
-	TEST_ASSERT(memcmp(temp, "lmno", 4) == 0);
+	TEST_ASSERT_EQUAL(0, memcmp(temp, "lmno", 4));
 
 	// Test single push and pop to overflow
 	TEST_ASSERT(buf.push('p', false));
@@ -62,7 +62,7 @@ void test_ring_buffer() {
 	TEST_ASSERT(buf.pop(temp + 2));
 	TEST_ASSERT(buf.pop(temp + 3));
 	TEST_ASSERT(!buf.pop(temp + 1));
-	TEST_ASSERT(memcmp(temp, "pqrs", 4) == 0);
+	TEST_ASSERT_EQUAL(0, memcmp(temp, "pqrs", 4));
 }
 
 void test_checksum() {
