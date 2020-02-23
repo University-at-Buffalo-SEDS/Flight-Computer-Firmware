@@ -13,11 +13,6 @@ void radio_send(const Packet &pkt)
 {
 	const byte *pkt_buf = reinterpret_cast<const byte *>(&pkt);
 	XBEE_SERIAL.write(pkt_buf, pkt.getLen());
-	uint8_t ck = 0;
-	for (size_t i = 0; i < pkt.getLen(); ++i) {
-		ck ^= pkt_buf[i];
-	}
-	XBEE_SERIAL.write(ck);
 }
 
 void radio_setup()
