@@ -9,7 +9,7 @@ struct LogMessage {
 	KalmanState state;
 	float altitude, accel_x, accel_y, accel_z, lat, lon, gps_alt;
 	int16_t temp;
-	uint16_t batt_v;
+	uint16_t batt_v, sys_v;
 	uint8_t checksum;
 
 	LogMessage() = default;
@@ -17,11 +17,11 @@ struct LogMessage {
 	LogMessage(uint32_t time_ms, KalmanState &state,
 		float altitude, float accel_x, float accel_y, float accel_z,
 		float lat, float lon, float gps_alt,
-		int16_t temp, uint16_t batt_v) :
+		int16_t temp, uint16_t batt_v, uint16_t sys_v) :
 		time_ms(time_ms), state(state),
 		altitude(altitude), accel_x(accel_x), accel_y(accel_y), accel_z(accel_z),
 		lat(lat), lon(lon), gps_alt(gps_alt),
-		temp(temp), batt_v(batt_v), checksum(0)
+		temp(temp), batt_v(batt_v), sys_v(sys_v), checksum(0)
 	{
 		checksum = struct_checksum(*this);
 	}

@@ -35,6 +35,7 @@ void setup()
 	digitalWrite(LED_BUILTIN, HIGH);
 
 	pinMode(PIN_BATT_V, INPUT_ANALOG);
+	pinMode(PIN_SYS_V, INPUT_ANALOG);
 	analogReadResolution(12);  // Enable full resolution
 
 	Serial.begin(2'250'000);
@@ -214,10 +215,13 @@ void deployment_step()
 		digitalWrite(PIN_MAIN, LOW);
 	}
 
-	uint16_t batt_v = analogRead(PIN_BATT_V);
+	uint32_t batt_v = analogRead(PIN_BATT_V);
 	Serial.print("Raw batt V: ");
 	Serial.println(batt_v);
-	batt_v = map(batt_v, BATT_MIN_READING, BATT_FULL_READING, 0, BATT_FULL_VOLTAGE);
+	batt_v = map(batt_v, BATT_MIN_READING, BATT_MAX_READING, 0, BATT_MAX_VOLTAGE);
+
+	uint32_t sys_v = analogRead(PIN_SYS_V);
+	sys_v = map(sys_v, SYS_MIN_READING, SYS_MAX_READING, 0, SYS_MAX_VOLTAGE);
 
 #if LOG_ENABLE
 	log_add(LogMessage(
@@ -231,7 +235,8 @@ void deployment_step()
 		gps_get_lon(),
 		gps_get_alt(),
 		baro_get_temp(),
-		(uint16_t)batt_v
+		(uint16_t)batt_v,
+		(uint16_t)sys_v
 	));
 #endif
 

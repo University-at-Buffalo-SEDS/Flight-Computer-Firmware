@@ -57,9 +57,16 @@
 // The value that the analog input reports when the battery is at 0V.
 #define BATT_MIN_READING 0
 // The value that the analog input reports when the battery is full.
-#define BATT_FULL_READING 41350
+#define BATT_MAX_READING 41350
 // The voltage that the battery is actually at when full (in millivolts).
-#define BATT_FULL_VOLTAGE 8320
+#define BATT_MAX_VOLTAGE 8320
+
+// The value that the analog input reports when the system is at 0V.
+#define SYS_MIN_READING 0
+// The value that the analog input reports when the system is at max voltage.
+#define SYS_MAX_READING 4096
+// The max system voltage (in millivolts).
+#define SYS_MAX_VOLTAGE 3300
 
 // Number of milliseconds of log data write out from before launch is detected.
 #define PRELOG_MS 2000
@@ -71,6 +78,7 @@
 #define PIN_DROGUE PC0
 #define PIN_MAIN PC1
 #define PIN_BATT_V A0
+#define PIN_SYS_V A1
 
 #define FLIGHT_FLASH_MOSI_PIN PB15
 #define FLIGHT_FLASH_MISO_PIN PB14

@@ -173,5 +173,7 @@ void log_print_msg(const LogMessage &msg)
 	Serial.print(msg.gps_alt);
 	Serial.print(',');
 	Serial.print(msg.batt_v);
+	Serial.print(',');
+	Serial.print(msg.sys_v);
 	Serial.println();
 }
