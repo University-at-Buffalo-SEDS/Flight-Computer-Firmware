@@ -13,7 +13,7 @@
 #define DEBUG_SECTION(x)
 #endif
 
-#define ROUND_UP_ALIGN(type, len) ((len) + alignof(type) - 1) & ~(alignof(type) - 1)
+#define ROUND_UP_ALIGN(type, len) (((len) + alignof(type) - 1) & ~(alignof(type) - 1))
 
 uint8_t calc_checksum(const uint8_t *data, size_t len);
 
