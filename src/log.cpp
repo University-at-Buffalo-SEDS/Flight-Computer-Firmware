@@ -9,6 +9,10 @@
 
 #define LOG_BUF_SIZE (PRELOG_MS / KALMAN_PERIOD)
 #define LOG_WRITE_BUF_SIZE (sizeof(LogMessage) * LOG_BUF_SIZE)
+#define LOG_MAX_FLIGHT_MESSAGES (FLIGHT_FLASH_FLIGHT_SIZE / sizeof(LogMessage))
+#define LOG_MAX_FLIGHT_TIME (LOG_MAX_FLIGHT_MESSAGES / (1000 / KALMAN_PERIOD))
+
+static_assert(LOG_MAX_FLIGHT_TIME > 5 * 60, "Insufficient space available for flight logs");
 
 void log_step();
 void log_print_msg(const LogMessage &msg);
@@ -27,7 +31,7 @@ void log_setup()
 	flash_setup();
 
 	flight_num = EEPROM.read(EEPROM_FLIGHT);
-	current_page = FLIGHT_FLASH_FLIGHT_SIZE * flight_num;
+	current_page = FLIGHT_FLASH_FLIGHT_PAGES * flight_num;
 
 	scheduler_add(TaskId::LogFlush, Task(log_step, 100'000L, 30'000L, 250'000L));
 }
@@ -51,7 +55,7 @@ void log_step()
 {
 	// Don't do anything if we haven't started flight yet
 	// or if we've run out of storage space.
-	if (!write_enabled || written_pages > FLIGHT_FLASH_FLIGHT_SIZE) {
+	if (!write_enabled || written_pages > FLIGHT_FLASH_FLIGHT_PAGES) {
 		return;
 	}
 
@@ -65,7 +69,7 @@ void log_step()
 	// Write messages from write buffer
 	uint8_t page[FLASH_PAGE_SIZE];
 	while (write_buf.pop(page, FLASH_PAGE_SIZE)) {
-		if (written_pages > FLIGHT_FLASH_FLIGHT_SIZE || flash_busy()) {
+		if (written_pages > FLIGHT_FLASH_FLIGHT_PAGES || flash_busy()) {
 			break;
 		}
 
@@ -108,10 +112,10 @@ void log_print()
 	for (size_t flight_i = 0; flight_i < FLIGHT_FLASH_FLIGHTS; ++flight_i) {
 		RingBuffer<uint8_t, LOG_WRITE_BUF_SIZE> read_buf;
 		uint8_t flight = wrapping_add(first_flight, flight_i, FLIGHT_FLASH_FLIGHTS);
-		size_t flight_addr = FLIGHT_FLASH_FLIGHT_SIZE * flight;
+		size_t flight_addr = FLIGHT_FLASH_FLIGHT_PAGES * flight;
 		bool flight_done = false;
 
-		for (size_t page_i = 0; page_i < FLIGHT_FLASH_FLIGHT_SIZE; ++page_i) {
+		for (size_t page_i = 0; page_i < FLIGHT_FLASH_FLIGHT_PAGES; ++page_i) {
 			flash_read(flight_addr + page_i, page);
 
 			if (!read_buf.push(page, FLASH_PAGE_SIZE, false)) {
