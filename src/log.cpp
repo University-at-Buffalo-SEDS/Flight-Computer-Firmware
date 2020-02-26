@@ -67,8 +67,8 @@ void log_step()
 	}
 
 	// Write messages from write buffer
-	uint8_t page[FLASH_PAGE_SIZE];
-	while (write_buf.pop(page, FLASH_PAGE_SIZE)) {
+	uint8_t page[FLIGHT_FLASH_PAGE_SIZE];
+	while (write_buf.pop(page, FLIGHT_FLASH_PAGE_SIZE)) {
 		if (written_pages > FLIGHT_FLASH_FLIGHT_PAGES || flash_busy()) {
 			break;
 		}
@@ -105,7 +105,7 @@ void log_print()
 	}
 
 	uint8_t first_flight = EEPROM.read(EEPROM_FLIGHT);
-	uint8_t page[FLASH_PAGE_SIZE];
+	uint8_t page[FLIGHT_FLASH_PAGE_SIZE];
 	LogMessage msg;
 	uint32_t last_time = 0;
 
@@ -118,7 +118,7 @@ void log_print()
 		for (size_t page_i = 0; page_i < FLIGHT_FLASH_FLIGHT_PAGES; ++page_i) {
 			flash_read(flight_addr + page_i, page);
 
-			if (!read_buf.push(page, FLASH_PAGE_SIZE, false)) {
+			if (!read_buf.push(page, FLIGHT_FLASH_PAGE_SIZE, false)) {
 				Serial.println("Read buffer error.");
 				break;
 			}
