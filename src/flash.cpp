@@ -63,7 +63,7 @@ void flash_write(size_t page_addr, uint8_t page[FLIGHT_FLASH_PAGE_SIZE])
 	spi_begin();
 	FLASH_SPI.transfer((uint8_t)FlashInstruction::PAGE_PROGRAM);
 
-	FLASH_SPI.transfer(page_addr & 0xFF00);
+	FLASH_SPI.transfer((page_addr >> 8) & 0xFF);
 	FLASH_SPI.transfer(page_addr & 0xFF);
 	FLASH_SPI.transfer(0x00);
 
@@ -78,7 +78,7 @@ void flash_write(size_t page_addr, uint8_t page[FLIGHT_FLASH_PAGE_SIZE])
 	spi_begin();
 	FLASH_SPI.transfer((uint8_t)FlashInstruction::FAST_READ);
 
-	FLASH_SPI.transfer(page_addr & 0xFF00);
+	FLASH_SPI.transfer((page_addr >> 8) & 0xFF);
 	FLASH_SPI.transfer(page_addr & 0xFF);
 	FLASH_SPI.transfer(0x00);
 	FLASH_SPI.transfer(0x00);
@@ -97,7 +97,7 @@ void flash_read(size_t page_addr, uint8_t page[FLIGHT_FLASH_PAGE_SIZE])
 	spi_begin();
 	FLASH_SPI.transfer((uint8_t)FlashInstruction::FAST_READ);
 
-	FLASH_SPI.transfer(page_addr & 0xFF00);
+	FLASH_SPI.transfer((page_addr >> 8) & 0xFF);
 	FLASH_SPI.transfer(page_addr & 0xFF);
 	FLASH_SPI.transfer(0x00);
 	FLASH_SPI.transfer(0x00);
@@ -115,7 +115,7 @@ void flash_erase(size_t page_addr)
 	spi_begin();
 	FLASH_SPI.transfer((uint8_t)FlashInstruction::BLOCK_ERASE_32KB);
 
-	FLASH_SPI.transfer(page_addr & 0xFF00);
+	FLASH_SPI.transfer((page_addr >> 8) & 0xFF);
 	FLASH_SPI.transfer(page_addr & 0xFF);
 	FLASH_SPI.transfer(0x00);
 
