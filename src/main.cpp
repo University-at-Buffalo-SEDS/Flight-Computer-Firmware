@@ -74,7 +74,7 @@ void command_step()
 {
 	switch (Serial.read()) {
 	case 'r':
-		log_print();
+		log_print_all();
 		break;
 	default:
 		Serial.println("Unrecognized command.");

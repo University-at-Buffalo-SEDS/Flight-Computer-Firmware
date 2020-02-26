@@ -36,4 +36,4 @@ void log_setup();
 void log_start();
 void log_stop();
 void log_add(const LogMessage &data);
-void log_print();
+void log_print_all();

@@ -14,8 +14,9 @@
 
 static_assert(LOG_MAX_FLIGHT_TIME > 5 * 60, "Insufficient space available for flight logs");
 
-void log_step();
-void log_print_msg(const LogMessage &msg);
+static void log_step();
+static void log_print_flight(size_t flight);
+static void log_print_msg(const LogMessage &msg);
 
 RingBuffer<LogMessage, LOG_BUF_SIZE> log_buf;
 RingBuffer<uint8_t, LOG_WRITE_BUF_SIZE> write_buf;
@@ -51,7 +52,7 @@ void log_stop()
 	write_enabled = false;
 }
 
-void log_step()
+static void log_step()
 {
 	// Don't do anything if we haven't started flight yet
 	// or if we've run out of storage space.
@@ -96,7 +97,7 @@ void log_add(const LogMessage &data)
 	}
 }
 
-void log_print()
+void log_print_all()
 {
 	if (write_enabled) {
 		Serial.println("Cannot read while in flight!");
@@ -104,50 +105,49 @@ void log_print()
 	}
 
 	uint8_t first_flight = EEPROM.read(EEPROM_FLIGHT);
-	uint8_t page[FLIGHT_FLASH_PAGE_SIZE];
-	LogMessage msg;
-	uint32_t last_time = 0;
 
 	for (size_t flight_i = 0; flight_i < FLIGHT_FLASH_FLIGHTS; ++flight_i) {
-		RingBuffer<uint8_t, LOG_WRITE_BUF_SIZE> read_buf;
 		uint8_t flight = wrapping_add(first_flight, flight_i, FLIGHT_FLASH_FLIGHTS);
-		size_t flight_addr = FLIGHT_FLASH_FLIGHT_PAGES * flight;
-		bool flight_done = false;
-
-		for (size_t page_i = 0; page_i < FLIGHT_FLASH_FLIGHT_PAGES; ++page_i) {
-			flash_read(flight_addr + page_i, page);
-
-			if (!read_buf.push(page, FLIGHT_FLASH_PAGE_SIZE, false)) {
-				Serial.println("Read buffer error.");
-				break;
-			}
-
-			size_t first_msg = true;
-			while (read_buf.pop(reinterpret_cast<uint8_t*>(&msg), sizeof(LogMessage))) {
-				// Flight ends if difference between timestamps is too large,
-				// there is no difference, or the checksum doesn't match.
-				if ((!first_msg && (msg.time_ms - last_time > 1000 ||
-							msg.time_ms == last_time)) ||
-						struct_checksum(msg) != msg.checksum) {
-					flight_done = true;
-					break;
-				}
-
-				log_print_msg(msg);
-
-				last_time = msg.time_ms;
-				first_msg = false;
-			}
-
-			if (flight_done) {
-				break;
-			}
-		}
+		log_print_flight(flight);
 		Serial.println("---");
 	}
 }
 
-void log_print_msg(const LogMessage &msg)
+static void log_print_flight(size_t flight)
+{
+	uint8_t page[FLIGHT_FLASH_PAGE_SIZE];
+	LogMessage msg;
+	RingBuffer<uint8_t, LOG_WRITE_BUF_SIZE> read_buf;
+	size_t flight_addr = FLIGHT_FLASH_FLIGHT_PAGES * flight;
+	uint32_t last_time = 0;
+
+	for (size_t page_i = 0; page_i < FLIGHT_FLASH_FLIGHT_PAGES; ++page_i) {
+		flash_read(flight_addr + page_i, page);
+
+		if (!read_buf.push(page, FLIGHT_FLASH_PAGE_SIZE, false)) {
+			Serial.println("Read buffer error.");
+			break;
+		}
+
+		size_t first_msg = true;
+		while (read_buf.pop(reinterpret_cast<uint8_t*>(&msg), sizeof(LogMessage))) {
+			// Flight ends if difference between timestamps is too large,
+			// there is no difference, or the checksum doesn't match.
+			if ((!first_msg && (msg.time_ms - last_time > 1000 ||
+						msg.time_ms == last_time)) ||
+					struct_checksum(msg) != msg.checksum) {
+				return;
+			}
+
+			log_print_msg(msg);
+
+			last_time = msg.time_ms;
+			first_msg = false;
+		}
+	}
+}
+
+static void log_print_msg(const LogMessage &msg)
 {
 	Serial.print(msg.time_ms);
 	Serial.print(',');
