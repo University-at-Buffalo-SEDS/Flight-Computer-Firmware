@@ -61,10 +61,9 @@ void log_step()
 
 	// Move messages from log buffer to write buffer
 	LogMessage temp;
-	while (log_buf.used() > 0 && write_buf.available() >= sizeof(LogMessage)) {
-		log_buf.pop(&temp);
-		write_buf.push(reinterpret_cast<uint8_t*>(&temp), sizeof(temp), false);
-	}
+	uint8_t *temp_bytes = reinterpret_cast<uint8_t *>(&temp);
+	while (log_buf.pop(&temp) &&
+			write_buf.push(temp_bytes, sizeof(temp), false));
 
 	// Write messages from write buffer
 	uint8_t page[FLIGHT_FLASH_PAGE_SIZE];

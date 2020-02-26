@@ -80,24 +80,24 @@ public:
 	// Adds a single element to the end of the ring buffer.
 	// Returns whether there was enough space to add the
 	// new element without overwriting old elements.
-	bool push(const T &val, bool overwrite);
+	[[nodiscard]] bool push(const T &val, bool overwrite);
 
 	// Pops a single element from the ring buffer and sets val to its value.
 	// Returns whether there was a value to pop.
-	bool pop(T *val);
+	[[nodiscard]] bool pop(T *val);
 
 	// Pushes an array of data into the ring buffer.
 	// If overwrite is false and there is not enough space to push
 	// all of the items, this will return false and do nothing.
 	// Otherwise, returns whether there was enough space to add the
 	// items without overwriting old data.
-	bool push(const T *data, size_t count, bool overwrite);
+	[[nodiscard]] bool push(const T *data, size_t count, bool overwrite);
 
 	// Pops an array of data from the ring buffer.
 	// If the array does not have count items to pop this
 	// immediately returns false and does nothing.
 	// Otherwise, this copies count elements into data and returns true.
-	bool pop(T *data, size_t count);
+	[[nodiscard]] bool pop(T *data, size_t count);
 };
 
 template <typename T, unsigned int Cap>
