@@ -122,12 +122,13 @@ void log_print()
 				break;
 			}
 
+			size_t first_msg = true;
 			while (read_buf.pop(reinterpret_cast<uint8_t*>(&msg), sizeof(LogMessage))) {
 				// Flight ends if difference between timestamps is too large,
 				// there is no difference, or the checksum doesn't match.
-				if (page_i > 0 && (msg.time_ms - last_time > 1000 ||
-						msg.time_ms == last_time ||
-						struct_checksum(msg) != msg.checksum)) {
+				if ((!first_msg && (msg.time_ms - last_time > 1000 ||
+							msg.time_ms == last_time)) ||
+						struct_checksum(msg) != msg.checksum) {
 					flight_done = true;
 					break;
 				}
@@ -135,6 +136,7 @@ void log_print()
 				log_print_msg(msg);
 
 				last_time = msg.time_ms;
+				first_msg = false;
 			}
 
 			if (flight_done) {
