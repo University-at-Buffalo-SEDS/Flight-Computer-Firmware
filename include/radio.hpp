@@ -1,10 +1,13 @@
 #pragma once
 #include "util.hpp"
 
+#include <HardwareSerial.h>
+
 struct __attribute__((__packed__)) Packet {
-	// Should be sorted in order of size in order to minimize space wasted for alignment.
-	// The start of the sync sequence should also be an invalid value for the first value listed.
-	// Size should also be kept below 64 bytes to avoid delays (STM32duino SERIAL_TX_BUFFER_SIZE).
+	// Should be sorted in order of size in order to preserve alignment without
+	// wasing space for padding.  The start of the sync sequence should also be
+	// an invalid value for the first value listed so that receivers don't get
+	// confused and interpret a valid packet as a sync word.
 	uint32_t millis;
 	float alt, vel, acc, raw_alt, raw_acc, lat, lon, apogee;
 	uint16_t temp, batt_v;
@@ -25,6 +28,8 @@ struct __attribute__((__packed__)) Packet {
 };
 
 static_assert(sizeof(Packet) == 42, "Packet size changed.");
+static_assert(sizeof(Packet) <= SERIAL_TX_BUFFER_SIZE,
+		"Packet should fit within serial TX buffer to minimize delay.");
 
 void radio_setup();
 void radio_send(const Packet &p);
