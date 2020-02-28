@@ -84,8 +84,8 @@
 #define FLIGHT_FLASH_MISO_PIN PB14
 #define FLIGHT_FLASH_SCK_PIN PB13
 
-#define GPS_SERIAL Serial1
-#define XBEE_SERIAL Serial2
+#define GPS_SERIAL Serial2
+#define XBEE_SERIAL Serial1
 
 #define EEPROM_FLIGHT 0
 
