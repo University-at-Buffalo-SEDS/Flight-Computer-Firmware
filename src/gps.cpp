@@ -17,7 +17,6 @@ static void gps_read()
 void gps_setup()
 {
 	GPS_SERIAL.begin(9600);
-	delay(10);
 	// We only need RMC and GGA commands
 	GPS_SERIAL.println(F(PMTK_SET_NMEA_OUTPUT_RMCGGA));
 #if GPS_UPDATE_RATE == 1
@@ -55,8 +54,6 @@ void gps_setup()
 	// DGPS: Accuracy improvement measures.
 	GPS_SERIAL.println(F(PMTK_ENABLE_SBAS));
 	GPS_SERIAL.println(F(PMTK_ENABLE_WAAS));
-
-	delay(1000);
 
 	// Ask for the release and version
 	GPS_SERIAL.println(F(PMTK_Q_RELEASE));
