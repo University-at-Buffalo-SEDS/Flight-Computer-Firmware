@@ -12,6 +12,8 @@ SPIClass FLASH_SPI(FLIGHT_FLASH_MOSI_PIN, FLIGHT_FLASH_MISO_PIN, FLIGHT_FLASH_SC
 #define FLASH_SPI SPI
 #endif
 
+#define W25Q16_DEVICE_ID 0x14
+
 // 18Mhz is max spopported by STM32 when SYSCLK is 72MHz.
 // Need to use FAST_READ instruction if above 50MHz
 static const SPISettings spi_settings(18'000'000, MSBFIRST, SPI_MODE0);
@@ -22,6 +24,7 @@ enum class FlashInstruction : uint8_t {
 	READ_STATUS_REGISTER_1 = 0x05,
 	WRITE_ENABLE = 0x06,
 	BLOCK_ERASE_32KB = 0x52,
+	RELEASE_POWER_DOWN_DEVICE_ID = 0xAB,
 };
 
 static void spi_begin()
@@ -41,6 +44,21 @@ void flash_setup()
 	pinMode(PIN_FLASH_CS, OUTPUT);
 	digitalWrite(PIN_FLASH_CS, HIGH);
 	FLASH_SPI.begin();
+
+	spi_begin();
+	FLASH_SPI.transfer((uint8_t)FlashInstruction::RELEASE_POWER_DOWN_DEVICE_ID);
+	for (size_t i = 0; i < 3; ++i) {
+		FLASH_SPI.transfer(0);
+	}
+	uint8_t device_id = FLASH_SPI.transfer(0);
+	spi_end();
+
+	if (device_id != W25Q16_DEVICE_ID) {
+		Serial.println(F("Failed to set up flash!"));
+		while (true) { delay(1); }
+	} else {
+		Serial.println(F("Flash detected."));
+	}
 }
 
 void flash_write_enable()
