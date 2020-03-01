@@ -95,6 +95,8 @@ void flash_write(size_t page_addr, uint8_t page[FLIGHT_FLASH_PAGE_SIZE])
 
 #ifndef NDEBUG
 	// Validate write
+	while (flash_busy()) { delayMicroseconds(1); }
+
 	spi_begin();
 	FLASH_SPI.transfer((uint8_t)FlashInstruction::READ_DATA);
 
