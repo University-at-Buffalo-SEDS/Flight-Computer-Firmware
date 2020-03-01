@@ -10,9 +10,7 @@
 // May also cause unexpected delays when the interrupt triggers.
 #define ADXL345_USE_INT 0
 
-// The ADXL345 supports up to 5MHz, but the level shifters on the Adafruit board limit us to <2Mhz.
-// TODO: Should be able to turn this up to 5MHz on the final boards.
-static const SPISettings spi_settings(2'000'000, MSBFIRST, SPI_MODE3);
+static const SPISettings spi_settings(5'000'000, MSBFIRST, SPI_MODE3);
 static float last_accel[3] = {NAN, NAN, NAN};
 
 void accel_step();

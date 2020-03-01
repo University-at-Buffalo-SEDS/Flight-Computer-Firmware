@@ -30,9 +30,7 @@ enum BmpReg : uint8_t {
 	REG_READOUT_START = 0xF7,
 };
 
-// The BMP280 supports up to 10MHz, but the level shifters on the Adafruit board limit us to <2Mhz.
-// TODO: Should be able to turn this up to 10MHz on the final boards.
-static const SPISettings spi_settings(2'000'000, MSBFIRST, SPI_MODE0);
+static const SPISettings spi_settings(10'000'000, MSBFIRST, SPI_MODE0);
 static float last_press = NAN;
 static float last_alt = NAN;
 static int16_t last_temp = INT16_MIN;
