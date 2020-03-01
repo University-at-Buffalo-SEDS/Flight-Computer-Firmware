@@ -12,13 +12,15 @@ SPIClass FLASH_SPI(FLIGHT_FLASH_MOSI_PIN, FLIGHT_FLASH_MISO_PIN, FLIGHT_FLASH_SC
 #define FLASH_SPI SPI
 #endif
 
-static const SPISettings spi_settings(133'000'000, MSBFIRST, SPI_MODE0);
+// 18Mhz is max spopported by STM32 when SYSCLK is 72MHz.
+// Need to use FAST_READ instruction if above 50MHz
+static const SPISettings spi_settings(18'000'000, MSBFIRST, SPI_MODE0);
 
 enum class FlashInstruction : uint8_t {
 	PAGE_PROGRAM = 0x02,
+	READ_DATA = 0x03,
 	READ_STATUS_REGISTER_1 = 0x05,
 	WRITE_ENABLE = 0x06,
-	FAST_READ = 0x0B,
 	BLOCK_ERASE_32KB = 0x52,
 };
 
@@ -76,11 +78,10 @@ void flash_write(size_t page_addr, uint8_t page[FLIGHT_FLASH_PAGE_SIZE])
 #ifndef NDEBUG
 	// Validate write
 	spi_begin();
-	FLASH_SPI.transfer((uint8_t)FlashInstruction::FAST_READ);
+	FLASH_SPI.transfer((uint8_t)FlashInstruction::READ_DATA);
 
 	FLASH_SPI.transfer((page_addr >> 8) & 0xFF);
 	FLASH_SPI.transfer(page_addr & 0xFF);
-	FLASH_SPI.transfer(0x00);
 	FLASH_SPI.transfer(0x00);
 
 	for (size_t i = 0; i < FLIGHT_FLASH_PAGE_SIZE; ++i) {
@@ -95,11 +96,10 @@ void flash_read(size_t page_addr, uint8_t page[FLIGHT_FLASH_PAGE_SIZE])
 {
 	flash_write_enable();
 	spi_begin();
-	FLASH_SPI.transfer((uint8_t)FlashInstruction::FAST_READ);
+	FLASH_SPI.transfer((uint8_t)FlashInstruction::READ_DATA);
 
 	FLASH_SPI.transfer((page_addr >> 8) & 0xFF);
 	FLASH_SPI.transfer(page_addr & 0xFF);
-	FLASH_SPI.transfer(0x00);
 	FLASH_SPI.transfer(0x00);
 
 	for (size_t i = 0; i < FLIGHT_FLASH_PAGE_SIZE; ++i) {
