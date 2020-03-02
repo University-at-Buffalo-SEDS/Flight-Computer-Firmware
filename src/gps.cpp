@@ -59,11 +59,11 @@ void gps_setup()
 	GPS_SERIAL.println(F(PMTK_Q_RELEASE));
 
 	// This should be fast enough to parse 25-30 NMEA sentences per second.
-	scheduler_add(TaskId::Gps, Task(gps_step, 32'000, 100, 40'000));
+	scheduler_add(TaskId::Gps, Task(gps_step, 32'000, 300, 40'000));
 	// Each byte takes about 10 bits (1 start bit + 8 data bits + 1 stop bit).
 	// Additionally, Teensy maintains a 64 byte buffer by default.
 	// Subtract 100 so that we're never late.
-	scheduler_add(TaskId::GpsRead, Task(gps_read, ((10'000'000 * 62) / GPS_BAUD) - 100));
+	scheduler_add(TaskId::GpsRead, Task(gps_read, ((10'000'000 * 62) / GPS_BAUD) - 100, 250));
 }
 
 void gps_step()

@@ -105,7 +105,7 @@ void accel_setup()
 	attachInterrupt(digitalPinToInterrupt(PIN_ADXL345_INT), accel_step, FALLING);
 #else
 	SPI.endTransaction();
-	scheduler_add(TaskId::Accel, Task(accel_step, KALMAN_PERIOD * 1000L));
+	scheduler_add(TaskId::Accel, Task(accel_step, KALMAN_PERIOD * 1000L, 120));
 #endif
 
 	accel_step();

@@ -18,5 +18,5 @@ void radio_send(const Packet &pkt)
 void radio_setup()
 {
 	XBEE_SERIAL.begin(115200);
-	scheduler_add(TaskId::PacketSync, Task(radio_sync, 20 * KALMAN_PERIOD * 1000L));
+	scheduler_add(TaskId::PacketSync, Task(radio_sync, 20 * KALMAN_PERIOD * 1000L, 20));
 }

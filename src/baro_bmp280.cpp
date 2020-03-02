@@ -146,7 +146,7 @@ void baro_setup()
 	write8(REG_CONTROL, 0b010'101'11); // osrs_t=2(2x), osrs_p=5(16x), mode=3(normal)
 	write8(REG_CONFIG, 0b000'000'0'0);  // t_sb=0(0.5ms), filter=0, resv=0, spi3w_en=0
 
-	scheduler_add(TaskId::Baro, Task(baro_step, KALMAN_PERIOD * 1000L));
+	scheduler_add(TaskId::Baro, Task(baro_step, KALMAN_PERIOD * 1000L, 160));
 }
 
 float baro_get_altitude()

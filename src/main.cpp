@@ -55,10 +55,10 @@ void setup()
 	radio_setup();
 	kalman_setup();
 
-	scheduler_add(TaskId::Deployment, Task(deployment_step, KALMAN_PERIOD * 1000L));
-	scheduler_add(TaskId::Command, Task(command_step, 100'000L));
-	scheduler_add(TaskId::Print, Task(print_step, 3'000'000L));
-	scheduler_add(TaskId::Blink, Task(blink_step, (KALMAN_PERIOD / 2) * 1000L));
+	scheduler_add(TaskId::Deployment, Task(deployment_step, KALMAN_PERIOD * 1000L, 2500));
+	scheduler_add(TaskId::Command, Task(command_step, 100'000L, 10));
+	scheduler_add(TaskId::Print, Task(print_step, 3'000'000L, 3000));
+	scheduler_add(TaskId::Blink, Task(blink_step, (KALMAN_PERIOD / 2) * 1000L, 20));
 }
 
 void loop()
