@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <EEPROM.h>
+#include <cassert>
 
 #include "log.hpp"
 #include "config.hpp"
