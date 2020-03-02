@@ -33,7 +33,7 @@ static void run_task(uint32_t sched_start, uint32_t time_since_last_run, Task *t
 	}
 }
 
-uint32_t scheduler()
+uint32_t schedule()
 {
 	uint32_t sched_start = micros();
 	uint32_t next_task = sched_start - 1;

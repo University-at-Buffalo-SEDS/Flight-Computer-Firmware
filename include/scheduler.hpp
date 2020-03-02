@@ -46,4 +46,4 @@ public:
 void scheduler_add(TaskId tid, const Task &task);
 
 // Runs scheduled tasks.  Returns the micros time when the next task is scheduled.
-uint32_t scheduler();
+uint32_t schedule();

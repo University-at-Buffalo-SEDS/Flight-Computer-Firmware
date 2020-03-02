@@ -74,7 +74,7 @@ void setup()
 
 void loop()
 {
-	uint32_t next_run = scheduler();
+	uint32_t next_run = schedule();
 	int32_t wait_time = sdelta(micros(), next_run);
 	if (wait_time > 4) {
 		delayMicroseconds(wait_time - 4);
