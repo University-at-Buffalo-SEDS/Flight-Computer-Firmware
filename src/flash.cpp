@@ -27,6 +27,11 @@ enum class FlashInstruction : uint8_t {
 	RELEASE_POWER_DOWN_DEVICE_ID = 0xAB,
 };
 
+#define FLIGHT_FLASH_BUSY_MASK 0x01
+#define FLIGHT_FLASH_WEL_MASK  0x02
+
+static uint32_t flash_status_1();
+
 static void spi_begin()
 {
 	FLASH_SPI.beginTransaction(spi_settings);
@@ -63,18 +68,27 @@ void flash_setup()
 
 void flash_write_enable()
 {
+	assert(!flash_busy());
+
 	spi_begin();
 	FLASH_SPI.transfer((uint8_t)FlashInstruction::WRITE_ENABLE);
 	spi_end();
+
+	assert(flash_status_1() & FLIGHT_FLASH_WEL_MASK);
+}
+
+static uint32_t flash_status_1()
+{
+	spi_begin();
+	FLASH_SPI.transfer((uint8_t)FlashInstruction::READ_STATUS_REGISTER_1);
+	uint8_t status = FLASH_SPI.transfer(0);
+	spi_end();
+	return status;
 }
 
 bool flash_busy()
 {
-	spi_begin();
-	FLASH_SPI.transfer((uint8_t)FlashInstruction::READ_STATUS_REGISTER_1);
-	bool busy = (bool)(FLASH_SPI.transfer(0) & 0x01);
-	spi_end();
-	return busy;
+	return flash_status_1() & FLIGHT_FLASH_BUSY_MASK;
 }
 
 void flash_write(size_t page_addr, uint8_t page[FLIGHT_FLASH_PAGE_SIZE])
@@ -92,6 +106,8 @@ void flash_write(size_t page_addr, uint8_t page[FLIGHT_FLASH_PAGE_SIZE])
 	}
 
 	spi_end();
+
+	assert(flash_busy());
 
 #ifndef NDEBUG
 	// Validate write
@@ -114,7 +130,8 @@ void flash_write(size_t page_addr, uint8_t page[FLIGHT_FLASH_PAGE_SIZE])
 
 void flash_read(size_t page_addr, uint8_t page[FLIGHT_FLASH_PAGE_SIZE])
 {
-	flash_write_enable();
+	assert(!flash_busy());
+
 	spi_begin();
 	FLASH_SPI.transfer((uint8_t)FlashInstruction::READ_DATA);
 
@@ -138,6 +155,7 @@ void flash_erase(size_t page_addr)
 	FLASH_SPI.transfer((page_addr >> 8) & 0xFF);
 	FLASH_SPI.transfer(page_addr & 0xFF);
 	FLASH_SPI.transfer(0x00);
-
 	spi_end();
+
+	assert(flash_busy());
 }
