@@ -168,7 +168,19 @@ void deployment_step()
 	accel_mag -= gravity_est_state.old_old_est;
 	kfloat_t alt = raw_alt - ground_level_est_state.old_old_est;
 
-	state = kalman_step(accel_mag, alt);
+	bool any_channel_firing = false;
+	for (const ChannelStatus &s : channel_status) {
+		if (s.firing) {
+			any_channel_firing = true;
+			break;
+		}
+	}
+
+	// Skip kalman filter shortly after deployment to ignore
+	// the corresponding pressure/acceleration spikes.
+	if (!any_channel_firing) {
+		state = kalman_step(accel_mag, alt);
+	}
 
 	if (phase == FlightPhase::Idle) {
 		// Detect launch
