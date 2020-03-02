@@ -13,19 +13,27 @@
 
 #include <cmath>
 
+struct ChannelStatus {
+	uint32_t fire_time;
+	bool firing;
+};
+
 // Prototypes
 void command_step();
 void blink_step();
 void print_step();
 void deployment_step();
+void channel_step();
+void channel_fire(Channel chan);
+
+static std::array<ChannelStatus, channel_config.size()> channel_status;
 
 void setup()
 {
-	pinMode(PIN_DROGUE, OUTPUT);
-	digitalWrite(PIN_DROGUE, LOW);
-
-	pinMode(PIN_MAIN, OUTPUT);
-	digitalWrite(PIN_MAIN, LOW);
+	for (const ChannelConfig &c : channel_config) {
+		pinMode(c.fire_pin, OUTPUT);
+		digitalWrite(c.fire_pin, LOW);
+	}
 
 #ifdef PIN_LAUNCH
 	pinMode(PIN_LAUNCH, OUTPUT);
@@ -57,6 +65,8 @@ void setup()
 	kalman_setup();
 
 	scheduler_add(TaskId::Deployment, Task(deployment_step, KALMAN_PERIOD * 1000L, 2500));
+	scheduler_add(TaskId::ChannelTimeout, Task(channel_step,
+			CHANNEL_FIRE_TIME * 100L, 10, CHANNEL_FIRE_TIME * 200L));
 	scheduler_add(TaskId::Command, Task(command_step, 100'000L, 10));
 	scheduler_add(TaskId::Print, Task(print_step, 3'000'000L, 3000));
 	scheduler_add(TaskId::Blink, Task(blink_step, (KALMAN_PERIOD / 2) * 1000L, 20));
@@ -68,6 +78,27 @@ void loop()
 	int32_t wait_time = sdelta(micros(), next_run);
 	if (wait_time > 1) {
 		delayMicroseconds(wait_time - 1);
+	}
+}
+
+void channel_fire(Channel chan)
+{
+	ChannelStatus &status = channel_status[(size_t)chan];
+	status.firing = true;
+	status.fire_time = millis();
+	digitalWrite(channel_config[(size_t)chan].fire_pin, HIGH);
+}
+
+void channel_step()
+{
+	uint32_t now = millis();
+	for (size_t i = 0; i < channel_status.size(); ++i) {
+		ChannelStatus &status = channel_status[i];
+		const ChannelConfig &config = channel_config[i];
+		if (status.firing && delta(status.fire_time, now) > CHANNEL_FIRE_TIME) {
+			status.firing = false;
+			digitalWrite(config.fire_pin, LOW);
+		}
 	}
 }
 
@@ -99,8 +130,6 @@ void print_step()
 
 void deployment_step()
 {
-	static uint32_t drogue_trigger_time = 0;
-	static uint32_t main_trigger_time = 0;
 	static uint32_t land_time = 0;
 	static FlightPhase phase = FlightPhase::Startup;
 	static KalmanState *state;
@@ -157,8 +186,7 @@ void deployment_step()
 		// Detect apogee
 		if (state->rate < 0) {
 			apogee = state->pos;
-			drogue_trigger_time = step_time;
-			digitalWrite(PIN_DROGUE, HIGH);
+			channel_fire(Channel::Drogue);
 			phase = FlightPhase::DescendingWithDrogue;
 
 			Serial.println(F("===================================== Apogee!"));
@@ -176,10 +204,9 @@ void deployment_step()
 #ifdef FAILSAFE_VELOCITY
 			|| state->rate < -(FAILSAFE_VELOCITY)
 #endif
-				) && delta(drogue_trigger_time, step_time) > 3000) {
+				) && delta(channel_status[(size_t)Channel::Drogue].fire_time, step_time) > 3000) {
 			phase = FlightPhase::DescendingWithMain;
-			main_trigger_time = step_time;
-			digitalWrite(PIN_MAIN, HIGH);
+			channel_fire(Channel::Main);
 
 			Serial.println(F("===================================== Deploy main!"));
 			send_now = true;
@@ -204,15 +231,6 @@ void deployment_step()
 		} else {
 			land_time = 0;
 		}
-	}
-
-	// Disable drogue igniter after 1 second
-	if (phase >= FlightPhase::DescendingWithDrogue && delta(drogue_trigger_time, step_time) > 1000) {
-		digitalWrite(PIN_DROGUE, LOW);
-	}
-	// Disable main igniter after 1 second
-	if (phase >= FlightPhase::DescendingWithMain && delta(main_trigger_time, step_time) > 1000) {
-		digitalWrite(PIN_MAIN, LOW);
 	}
 
 	uint32_t batt_v = analogRead(PIN_BATT_V);

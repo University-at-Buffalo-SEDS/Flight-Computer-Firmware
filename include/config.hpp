@@ -1,4 +1,7 @@
 #pragma once
+#include <Arduino.h>
+
+#include <array>
 
 #define LOG_ENABLE 1
 
@@ -74,10 +77,26 @@
 #define PIN_BMP280_CS PA9
 #define PIN_FLASH_CS PB11
 //#define PIN_LAUNCH
-#define PIN_DROGUE PC0
-#define PIN_MAIN PC1
 #define PIN_BATT_V A0
 #define PIN_SYS_V A1
+
+// How long to leave the fire channels active, in milliseconds
+#define CHANNEL_FIRE_TIME 1000
+
+struct ChannelConfig {
+	int fire_pin;
+};
+
+enum class Channel {
+	Drogue,
+	Main,
+	Count
+};
+
+constexpr std::array<ChannelConfig, (size_t)Channel::Count> channel_config = {
+	ChannelConfig {PC0},
+	ChannelConfig {PC1}
+};
 
 #define FLIGHT_FLASH_MOSI_PIN PB15
 #define FLIGHT_FLASH_MISO_PIN PB14
