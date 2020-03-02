@@ -1,7 +1,8 @@
-#include <Adafruit_GPS.h>
 #include "gps.hpp"
 #include "scheduler.hpp"
 #include "util.hpp"
+
+#include <Adafruit_GPS.h>
 
 void gps_step();
 

@@ -1,10 +1,12 @@
-#include <Arduino.h>
-#include <SPI.h>
-#include <cassert>
-
 #include "flash.hpp"
+
 #include "config.hpp"
 #include "log.hpp"
+
+#include <Arduino.h>
+#include <SPI.h>
+
+#include <cassert>
 
 #if defined(FLIGHT_FLASH_MOSI_PIN) || defined(FLIGHT_FLASH_MISO_PIN) || defined(FLIGHT_FLASH_SCK_PIN)
 SPIClass FLASH_SPI(FLIGHT_FLASH_MOSI_PIN, FLIGHT_FLASH_MISO_PIN, FLIGHT_FLASH_SCK_PIN);
@@ -88,7 +90,7 @@ static uint32_t flash_status_1()
 
 bool flash_busy()
 {
-	return flash_status_1() & FLIGHT_FLASH_BUSY_MASK;
+	return static_cast<bool>(flash_status_1() & FLIGHT_FLASH_BUSY_MASK);
 }
 
 void flash_write(size_t page_addr, uint8_t page[FLIGHT_FLASH_PAGE_SIZE])

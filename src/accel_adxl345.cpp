@@ -1,7 +1,8 @@
 #include "accel.hpp"
-#include <SPI.h>
-#include "util.hpp"
 #include "scheduler.hpp"
+#include "util.hpp"
+
+#include <SPI.h>
 
 // Adafruit library does not support hardware SPI and reads the
 // axes one at a time, contrary to what the datasheet recommends.

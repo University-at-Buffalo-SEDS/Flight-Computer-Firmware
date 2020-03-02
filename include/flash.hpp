@@ -1,4 +1,6 @@
 #pragma once
+#include <cstddef>
+#include <cstdint>
 
 #define FLIGHT_FLASH_PAGE_SIZE (256)
 #define FLIGHT_FLASH_BLOCK_SIZE (32768)

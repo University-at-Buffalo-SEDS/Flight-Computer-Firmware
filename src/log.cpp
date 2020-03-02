@@ -1,12 +1,14 @@
-#include <Arduino.h>
-#include <EEPROM.h>
-#include <cassert>
-
 #include "log.hpp"
+
 #include "config.hpp"
-#include "util.hpp"
 #include "flash.hpp"
 #include "scheduler.hpp"
+#include "util.hpp"
+
+#include <Arduino.h>
+#include <EEPROM.h>
+
+#include <cassert>
 
 #define LOG_BUF_SIZE (PRELOG_MS / KALMAN_PERIOD)
 #define LOG_WRITE_BUF_SIZE (sizeof(LogMessage) * LOG_BUF_SIZE)
@@ -63,7 +65,7 @@ static void log_step()
 
 	// Move messages from log buffer to write buffer
 	LogMessage temp;
-	uint8_t *temp_bytes = reinterpret_cast<uint8_t *>(&temp);
+	auto temp_bytes = reinterpret_cast<uint8_t *>(&temp);
 	while (write_buf.available() >= sizeof(LogMessage)) {
 		if (!log_buf.pop(&temp)) {
 			break;
@@ -134,8 +136,8 @@ static void log_print_flight(size_t flight)
 			break;
 		}
 
-		size_t first_msg = true;
-		while (read_buf.pop(reinterpret_cast<uint8_t*>(&msg), sizeof(LogMessage))) {
+		bool first_msg = true;
+		while (read_buf.pop(reinterpret_cast<uint8_t *>(&msg), sizeof(LogMessage))) {
 			// Flight ends if difference between timestamps is too large,
 			// there is no difference, or the checksum doesn't match.
 			if ((!first_msg && (msg.time_ms - last_time > 1000 ||

@@ -9,7 +9,6 @@
 #define LAUNCH_VELOCITY 8
 #define LAUNCH_ACCEL 20
 
-
 // Altitude and velocity and acceleration below which landing will
 // be detected.  Acceleration is comphensated for gravity.
 // In order to avoid issues with spurious readings, these values must

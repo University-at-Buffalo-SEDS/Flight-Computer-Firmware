@@ -1,11 +1,11 @@
 #pragma once
-
-#include <climits>
-#include <cstdint>
-#include <cstddef>
-#include <cmath>
 #include "config.hpp"
 #include "kalman.hpp"
+
+#include <climits>
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
 
 #if DEBUG
 #define DEBUG_SECTION(x) x
@@ -60,7 +60,7 @@ struct DelayedEstState {
 
 // Calculates an average of the readings passed to it, with a delay.
 // Used to calculate an estumate of the local gravity and altitude above sea level.
-void calc_delayed_est(DelayedEstState &state, kfloat_t reading);
+void calc_delayed_est(DelayedEstState *state, kfloat_t reading);
 
 inline static size_t wrapping_add(size_t val, size_t increment, size_t max) {
 	return (val + increment) % max;

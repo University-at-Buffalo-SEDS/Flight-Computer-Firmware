@@ -1,10 +1,12 @@
 // Based on http://home.earthlink.net/~david.schultz/rnd/2004/KalmanApogeeII.pdf
 
-#include <cstdlib>
-#include <Arduino.h>
-#include "kalman.hpp"
 #include "config.hpp"
+#include "kalman.hpp"
 #include "util.hpp"
+
+#include <Arduino.h>
+
+#include <cstdlib>
 
 // State transition matrix
 static kfloat_t phi[3][3] = {

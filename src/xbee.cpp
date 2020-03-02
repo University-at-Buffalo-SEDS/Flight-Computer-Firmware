@@ -1,8 +1,8 @@
-#include <Arduino.h>
-
 #include "radio.hpp"
-#include "util.hpp"
 #include "scheduler.hpp"
+#include "util.hpp"
+
+#include <Arduino.h>
 
 void radio_sync()
 {

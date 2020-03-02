@@ -1,15 +1,16 @@
-#include "baro.hpp"
 #include "accel.hpp"
+#include "baro.hpp"
+#include "config.hpp"
 #include "gps.hpp"
 #include "kalman.hpp"
 #include "log.hpp"
-#include "config.hpp"
-#include "util.hpp"
-#include "scheduler.hpp"
 #include "radio.hpp"
+#include "scheduler.hpp"
+#include "util.hpp"
 
-#include <Wire.h>
 #include <SPI.h>
+#include <Wire.h>
+
 #include <cmath>
 
 // Prototypes
@@ -96,7 +97,6 @@ void print_step()
 	baro_print();
 }
 
-
 void deployment_step()
 {
 	static uint32_t drogue_trigger_time = 0;
@@ -124,8 +124,8 @@ void deployment_step()
 	kfloat_t accel_mag = sqrtf(accel[0] * accel[0] + accel[1] * accel[1] + accel[2] * accel[2]);
 
 	if (phase < FlightPhase::Launched) {
-		calc_delayed_est(gravity_est_state, accel_mag);
-		calc_delayed_est(ground_level_est_state, raw_alt);
+		calc_delayed_est(&gravity_est_state, accel_mag);
+		calc_delayed_est(&ground_level_est_state, raw_alt);
 	}
 
 	if (phase == FlightPhase::Startup) {

@@ -1,8 +1,9 @@
 #pragma once
-#include <cstdint>
-#include <cstddef>
 #include "kalman.hpp"
 #include "util.hpp"
+
+#include <cstddef>
+#include <cstdint>
 
 struct LogMessage {
 	uint32_t time_ms;

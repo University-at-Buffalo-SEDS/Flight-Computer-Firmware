@@ -1,9 +1,11 @@
-#include <Arduino.h>
-#include <SPI.h>
-#include <cmath>
-#include "util.hpp"
 #include "baro.hpp"
 #include "scheduler.hpp"
+#include "util.hpp"
+
+#include <Arduino.h>
+#include <SPI.h>
+
+#include <cmath>
 
 struct BMPCal {
 	uint16_t dig_T1;

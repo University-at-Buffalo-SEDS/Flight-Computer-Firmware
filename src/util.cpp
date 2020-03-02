@@ -1,16 +1,16 @@
 #include "util.hpp"
 
-void calc_delayed_est(DelayedEstState &state, kfloat_t reading)
+void calc_delayed_est(DelayedEstState *state, kfloat_t reading)
 {
-	if (state.count > DELAYED_EST_SAMPLES) {
-		state.old_old_est = state.old_est;
-		state.old_est = state.est;
-		state.count = 1;
+	if (state->count > DELAYED_EST_SAMPLES) {
+		state->old_old_est = state->old_est;
+		state->old_est = state->est;
+		state->count = 1;
 	}
 	// Compute a running average
-	state.est *= (float)state.count / (float)(state.count + 1);
-	state.est += reading / (float)(state.count + 1);
-	state.count += 1;
+	state->est *= (float)state->count / (float)(state->count + 1);
+	state->est += reading / (float)(state->count + 1);
+	state->count += 1;
 }
 
 const static uint8_t crc_table[256] = {
