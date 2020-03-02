@@ -88,7 +88,7 @@ void accel_setup()
 
 	if (read_reg(ADXL345_REG_DEVID) != 0xE5) {
 		Serial.println(F("ADXL345 not found!"));
-		while (true) { delay(1); }
+		abort();
 	} else {
 		Serial.println(F("ADXL345 detected."));
 	}

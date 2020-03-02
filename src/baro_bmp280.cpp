@@ -138,7 +138,7 @@ void baro_setup()
 
 	if (read8(REG_CHIPID) != BMP280_CHIPID) {
 		Serial.println(F("Failed to set up BMP280!"));
-		while (true) { delay(1); }
+		abort();
 	} else {
 		Serial.println(F("BMP280 detected."));
 	}

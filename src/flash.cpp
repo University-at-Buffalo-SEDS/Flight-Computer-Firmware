@@ -62,7 +62,7 @@ void flash_setup()
 
 	if (device_id != W25Q16_DEVICE_ID) {
 		Serial.println(F("Failed to set up flash!"));
-		while (true) { delay(1); }
+		abort();
 	} else {
 		Serial.println(F("Flash detected."));
 	}
