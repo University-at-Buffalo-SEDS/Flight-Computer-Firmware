@@ -174,9 +174,9 @@ static void log_print_msg(const LogMessage &msg)
 	Serial.print(',');
 	Serial.print(msg.accel_z);
 	Serial.print(',');
-	Serial.print(msg.lat);
+	Serial.print(msg.lat, 6);
 	Serial.print(',');
-	Serial.print(msg.lon);
+	Serial.print(msg.lon, 6);
 	Serial.print(',');
 	Serial.print(msg.gps_alt);
 	Serial.print(',');
