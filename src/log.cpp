@@ -56,7 +56,7 @@ static void log_step()
 {
 	// Don't do anything if we haven't started flight yet
 	// or if we've run out of storage space.
-	if (!write_enabled || written_pages > FLIGHT_FLASH_FLIGHT_PAGES) {
+	if (!write_enabled || written_pages >= FLIGHT_FLASH_FLIGHT_PAGES) {
 		return;
 	}
 
@@ -73,20 +73,19 @@ static void log_step()
 
 	// Write messages from write buffer
 	uint8_t page[FLIGHT_FLASH_PAGE_SIZE];
-	while (write_buf.pop(page, FLIGHT_FLASH_PAGE_SIZE)) {
-		if (written_pages > FLIGHT_FLASH_FLIGHT_PAGES || flash_busy()) {
-			break;
-		}
-
+	while (written_pages < FLIGHT_FLASH_FLIGHT_PAGES && !flash_busy()) {
+		// Erase block if we've moved into a new one
 		if (!current_block_erased && current_page % FLIGHT_FLASH_PAGES_PER_BLOCK == 0) {
-			// Current page is in the next block.
-			// Erase it first.
 			flash_erase(current_page);
 			current_block_erased = true;
 			break;
 		}
 		// Clear erased flag
 		current_block_erased = false;
+
+		if (!write_buf.pop(page, FLIGHT_FLASH_PAGE_SIZE)) {
+			break;
+		}
 
 		flash_write(current_page, page);
 
