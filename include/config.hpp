@@ -49,7 +49,7 @@
 // before this overflows.  The default value coresponds to one second
 // worth of samples.  With the double delay this means that the estimate
 // will have a 1-2 second delay.
-#define DELAYED_EST_SAMPLES (1000/KALMAN_PERIOD)
+#define EST_HISTORY_SAMPLES (1000/KALMAN_PERIOD)
 
 // Altitude at which the main parachute should be deployed, in meters.
 #define MAIN_DEPLOY_ALTITUDE 381.0f  // 1250ft

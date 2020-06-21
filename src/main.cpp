@@ -133,9 +133,8 @@ void deployment_step()
 	static uint32_t land_time = 0;
 	static FlightPhase phase = FlightPhase::Startup;
 	static KalmanState *state;
-	static DelayedEstState gravity_est_state;
-	static DelayedEstState ground_level_est_state;
-	static DelayedEstState alt_est_state;
+	static AvgHistory<kfloat_t, EST_HISTORY_SAMPLES, 3> gravity_est_state;
+	static AvgHistory<kfloat_t, EST_HISTORY_SAMPLES, 3> ground_level_est_state;
 	static float apogee = 0;
 	float *accel = accel_get();
 	float raw_alt = baro_get_altitude();
@@ -153,20 +152,20 @@ void deployment_step()
 	kfloat_t accel_mag = sqrtf(accel[0] * accel[0] + accel[1] * accel[1] + accel[2] * accel[2]);
 
 	if (phase < FlightPhase::Launched) {
-		calc_delayed_est(&gravity_est_state, accel_mag);
-		calc_delayed_est(&ground_level_est_state, raw_alt);
+		gravity_est_state.add(accel_mag);
+		ground_level_est_state.add(raw_alt);
 	}
 
 	if (phase == FlightPhase::Startup) {
-		if (isnan(ground_level_est_state.old_old_est) ||
-				isnan(gravity_est_state.old_old_est)) {
+		if (!ground_level_est_state.full() ||
+				!gravity_est_state.full()) {
 			return;
 		}
 		phase = FlightPhase::Idle;
 	}
 
-	accel_mag -= gravity_est_state.old_old_est;
-	kfloat_t alt = raw_alt - ground_level_est_state.old_old_est;
+	accel_mag -= gravity_est_state.old_avg();
+	kfloat_t alt = raw_alt - ground_level_est_state.old_avg();
 
 	bool any_channel_firing = false;
 	for (const ChannelStatus &s : channel_status) {
