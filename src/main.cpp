@@ -28,6 +28,13 @@ void channel_fire(Channel chan);
 
 static std::array<ChannelStatus, channel_config.size()> channel_status;
 
+#ifdef KALMAN_GAINS
+static KalmanFilter kf(KALMAN_PERIOD / 1000.0f, {KALMAN_GAINS});
+#else
+static KalmanFilter kf(KALMAN_PERIOD / 1000.0f,
+		ALTITUDE_SIGMA, ACCELERATION_SIGMA, MODEL_SIGMA);
+#endif
+
 void setup()
 {
 	for (const ChannelConfig &c : channel_config) {
@@ -62,7 +69,6 @@ void setup()
 	log_setup();
 #endif
 	radio_setup();
-	kalman_setup();
 
 	scheduler_add(TaskId::Deployment, Task(deployment_step, KALMAN_PERIOD * 1000L, 2500));
 	scheduler_add(TaskId::ChannelTimeout, Task(channel_step,
@@ -132,10 +138,9 @@ void deployment_step()
 {
 	static uint32_t land_time = 0;
 	static FlightPhase phase = FlightPhase::Startup;
-	static KalmanState *state;
-	static AvgHistory<kfloat_t, EST_HISTORY_SAMPLES, 3> gravity_est_state;
-	static AvgHistory<kfloat_t, EST_HISTORY_SAMPLES, 3> ground_level_est_state;
-	static float apogee = 0;
+	static AvgHistory<float, EST_HISTORY_SAMPLES, 3> gravity_est_state;
+	static AvgHistory<float, EST_HISTORY_SAMPLES, 3> ground_level_est_state;
+	static kfloat_t apogee = 0;
 	float *accel = accel_get();
 	float raw_alt = baro_get_altitude();
 	// Only send telemetry every other step to avoid saturating the link and
@@ -149,7 +154,7 @@ void deployment_step()
 		return;
 	}
 
-	kfloat_t accel_mag = sqrtf(accel[0] * accel[0] + accel[1] * accel[1] + accel[2] * accel[2]);
+	float accel_mag = sqrtf(accel[0] * accel[0] + accel[1] * accel[1] + accel[2] * accel[2]);
 
 	if (phase < FlightPhase::Launched) {
 		gravity_est_state.add(accel_mag);
@@ -165,7 +170,7 @@ void deployment_step()
 	}
 
 	accel_mag -= gravity_est_state.old_avg();
-	kfloat_t alt = raw_alt - ground_level_est_state.old_avg();
+	float alt = raw_alt - ground_level_est_state.old_avg();
 
 	bool any_channel_firing = false;
 	for (const ChannelStatus &s : channel_status) {
@@ -178,12 +183,12 @@ void deployment_step()
 	// Skip kalman filter shortly after deployment to ignore
 	// the corresponding pressure/acceleration spikes.
 	if (!any_channel_firing) {
-		state = kalman_step(accel_mag, alt);
+		kf.step(accel_mag, alt);
 	}
 
 	if (phase == FlightPhase::Idle) {
 		// Detect launch
-		if (state->rate > LAUNCH_VELOCITY && state->accel > LAUNCH_ACCEL) {
+		if (kf.rate() > LAUNCH_VELOCITY && kf.accel() > LAUNCH_ACCEL) {
 			phase = FlightPhase::Launched;
 #ifdef PIN_LAUNCH
 			digitalWrite(PIN_LAUNCH, HIGH);
@@ -195,8 +200,8 @@ void deployment_step()
 		}
 	} else if (phase == FlightPhase::Launched) {
 		// Detect apogee
-		if (state->rate < 0) {
-			apogee = state->pos;
+		if (kf.rate() < 0) {
+			apogee = kf.pos();
 			channel_fire(Channel::Drogue);
 			phase = FlightPhase::DescendingWithDrogue;
 
@@ -211,9 +216,9 @@ void deployment_step()
 		// fails to deploy and we're lawndarting.
 		// Wait at least three seconds after drogue deployment though,
 		// in case the pressure and acceleration of the deployment throws us off.
-		if ((state->pos < MAIN_DEPLOY_ALTITUDE
+		if ((kf.pos() < MAIN_DEPLOY_ALTITUDE
 #ifdef FAILSAFE_VELOCITY
-			|| state->rate < -(FAILSAFE_VELOCITY)
+			|| kf.rate() < -(FAILSAFE_VELOCITY)
 #endif
 				) && delta(channel_status[(size_t)Channel::Drogue].fire_time, step_time) > 3000) {
 			phase = FlightPhase::DescendingWithMain;
@@ -223,9 +228,9 @@ void deployment_step()
 			send_now = true;
 		}
 	} else if (phase == FlightPhase::DescendingWithMain) {
-		if (state->pos < LANDED_ALT &&
-				abs(state->rate) < LANDED_VELOCITY &&
-				abs(state->accel) < LANDED_ACCEL) {
+		if (kf.pos() < LANDED_ALT &&
+				abs(kf.rate()) < LANDED_VELOCITY &&
+				abs(kf.accel()) < LANDED_ACCEL) {
 			if (land_time == 0) {
 				land_time = step_time;
 				if (land_time == 0) {
@@ -255,7 +260,7 @@ void deployment_step()
 #if LOG_ENABLE
 	log_add(LogMessage(
 		step_time,
-		*state,
+		kf.state(),
 		raw_alt,
 		accel[0],
 		accel[1],
@@ -270,7 +275,7 @@ void deployment_step()
 #endif
 
 	if (send_now) {
-		radio_send(Packet(phase, step_time, state->pos, state->rate, state->accel,
+		radio_send(Packet(phase, step_time, kf.pos(), kf.rate(), kf.accel(),
 				alt, accel_mag, gps_get_lat(), gps_get_lon(), apogee,
 				baro_get_temp(), batt_v));
 	}

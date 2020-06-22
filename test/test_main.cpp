@@ -84,36 +84,36 @@ void test_checksum() {
 
 void test_kalman() {
 	float eps = 1e-5;
-	kalman_setup();
+	KalmanFilter kf(0.1f, 1.0f, 1.0f, 0.2f);
 
-	KalmanState *state = kalman_step(1, 2);
-	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 2.275411, (float)state->pos);
-	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 0.250602, (float)state->rate);
-	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 0.224105, (float)state->accel);
+	kf.step(1, 2);
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 2.275105, (float)kf.pos());
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 0.250143, (float)kf.rate());
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 0.224111, (float)kf.accel());
 
-	state = kalman_step(2, 1);
-	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 2.214007, (float)state->pos);
-	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 0.317653, (float)state->rate);
-	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 0.533552, (float)state->accel);
+	kf.step(2, 1);
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 2.213849, (float)kf.pos());
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 0.317454, (float)kf.rate());
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 0.533552, (float)kf.accel());
 
-	state = kalman_step(16, 10000);
-	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 1279.085938, (float)state->pos);
-	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 914.356567, (float)state->rate);
-	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 280.655548, (float)state->accel);
+	kf.step(16, 10000);
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 1277.477295, (float)kf.pos());
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 912.007812, (float)kf.rate());
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 280.687927, (float)kf.accel());
 
-	state = kalman_step(0, 0);
-	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 1371.627075, (float)state->pos);
-	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 942.180542, (float)state->rate);
-	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 280.503174, (float)state->accel);
+	kf.step(0, 0);
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 1369.784180, (float)kf.pos());
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 939.835571, (float)kf.rate());
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 280.535583, (float)kf.accel());
 
 	for (int i = 0; i < 32; ++i) {
-		kalman_step(kfloat_t(i), kfloat_t(i));
+		kf.step(kfloat_t(i), kfloat_t(i));
 	}
-	state = kalman_step(0, 0);
+	kf.step(0, 0);
 
-	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 77.731865, (float)state->pos);
-	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 36.227261, (float)state->rate);
-	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 8.394773, (float)state->accel);
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 78.035400, (float)kf.pos());
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 36.407646, (float)kf.rate());
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 8.332301, (float)kf.accel());
 }
 
 int main() {
