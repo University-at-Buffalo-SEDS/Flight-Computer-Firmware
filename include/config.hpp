@@ -1,7 +1,13 @@
 #pragma once
+#ifdef NATIVE_TEST
+#define PC0 0
+#define PC1 0
+#else
 #include <Arduino.h>
+#endif
 
 #include <array>
+#include <cstddef>
 
 #define LOG_ENABLE 1
 

@@ -4,7 +4,9 @@
 #include "kalman.hpp"
 #include "util.hpp"
 
+#ifndef NATIVE_TEST
 #include <Arduino.h>
+#endif
 
 #include <cstdlib>
 

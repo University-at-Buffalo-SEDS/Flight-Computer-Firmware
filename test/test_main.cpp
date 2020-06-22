@@ -1,7 +1,11 @@
 #include <unity.h>
 #include <cstring>
 #include <cstdio>
+
+#include "kalman.hpp"
 #include "util.hpp"
+
+#define TEST_ASSERT_FLOAT_WITHIN_REL(factor, expected, actual) TEST_ASSERT_FLOAT_WITHIN((factor) * (expected), expected, actual)
 
 void test_ring_buffer() {
 	RingBuffer<char, 4> buf;
@@ -78,11 +82,46 @@ void test_checksum() {
 	TEST_ASSERT_EQUAL_HEX8(test.checksum, struct_checksum(test));
 }
 
+void test_kalman() {
+	float eps = 1e-5;
+	kalman_setup();
+
+	KalmanState *state = kalman_step(1, 2);
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 2.275411, (float)state->pos);
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 0.250602, (float)state->rate);
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 0.224105, (float)state->accel);
+
+	state = kalman_step(2, 1);
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 2.214007, (float)state->pos);
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 0.317653, (float)state->rate);
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 0.533552, (float)state->accel);
+
+	state = kalman_step(16, 10000);
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 1279.085938, (float)state->pos);
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 914.356567, (float)state->rate);
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 280.655548, (float)state->accel);
+
+	state = kalman_step(0, 0);
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 1371.627075, (float)state->pos);
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 942.180542, (float)state->rate);
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 280.503174, (float)state->accel);
+
+	for (int i = 0; i < 32; ++i) {
+		kalman_step(kfloat_t(i), kfloat_t(i));
+	}
+	state = kalman_step(0, 0);
+
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 77.731865, (float)state->pos);
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 36.227261, (float)state->rate);
+	TEST_ASSERT_FLOAT_WITHIN_REL(eps, 8.394773, (float)state->accel);
+}
+
 int main() {
 	UNITY_BEGIN();
 
 	RUN_TEST(test_ring_buffer);
 	RUN_TEST(test_checksum);
+	RUN_TEST(test_kalman);
 
 	UNITY_END();
 	return 0;

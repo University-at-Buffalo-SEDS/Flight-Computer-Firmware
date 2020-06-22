@@ -87,7 +87,7 @@ void AvgHistory<T, S, L>::add(T reading)
 			avg_history[i] = avg_history[i - 1];
 		}
 		count = 1;
-		hist_len = min(L - 1, hist_len + 1);
+		hist_len = std::min(L - 1, hist_len + 1);
 	}
 	// Compute a running average
 	avg_history[0] *= T(count) / T(count + 1);
