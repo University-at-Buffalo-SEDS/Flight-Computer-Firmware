@@ -56,7 +56,7 @@ void setup()
 
 	Serial.begin(2'250'000);
 
-	Serial.println(F("Avionics starting!"));
+	Serial.println(F("Flight Computer " __DATE__ " " __TIME__));
 
 	Wire.begin();
 
