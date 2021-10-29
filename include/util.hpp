@@ -31,10 +31,10 @@ inline static uint8_t struct_checksum(const S &val)
 }
 
 enum class FlightPhase : uint8_t {
-	Startup, // Doing initial setup
-	Idle, // On launchpad, not launched.
+	Startup,  // Doing initial setup
+	Idle,  // On launchpad, not launched.
 	Launched,  // Launched, still ascending.
-	DescendingWithDrogue, // Reached apogee, descending to main deployment altitude.
+	DescendingWithDrogue,  // Reached apogee, descending to main deployment altitude.
 	DescendingWithMain,  // Main deployed, waiting to land or already landed.
 	Landed,
 };

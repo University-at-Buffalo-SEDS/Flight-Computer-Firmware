@@ -3,7 +3,7 @@
 
 void baro_setup();
 
-// Can return NaN if data hasn't been recieved from the barometer yet.
+// Can return NaN if data hasn't been received from the barometer yet.
 float baro_get_altitude();
 int16_t baro_get_temp();
 

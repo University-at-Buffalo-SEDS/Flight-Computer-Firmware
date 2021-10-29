@@ -40,7 +40,7 @@
 #define KALMAN_PERIOD 100
 
 // Noise values for Kalman filter.  These should be rounded up a bit.
-// Standard deviation of altimiter noise in m
+// Standard deviation of altimeter noise in m
 //#define ALTITUDE_SIGMA 1.5f  // For MPL3115A2
 #define ALTITUDE_SIGMA 1.0f  // For BMP280.  Note: actual value is about 0.16
 // Standard deviation of accelerometer noise in m/s^2
