@@ -23,24 +23,22 @@ enum class TaskId : uint8_t {
 
 class Task {
 public:
-	Task(SchedCb cb, uint32_t period_us, uint32_t time_requirement_us, uint32_t max_delta_us = 0xFFFFFFFFL) :
+	Task(SchedCb cb, uint32_t period_us, uint32_t time_requirement_us) :
 		callback(cb),
 		last_run_us(0),
 		period_us(period_us),
-		time_requirement_us(time_requirement_us),
-		max_delta_us(max_delta_us)
+		time_requirement_us(time_requirement_us)
 	{}
 
 	Task() :
 		callback(nullptr),
 		last_run_us(0),
 		period_us(0),
-		time_requirement_us(0),
-		max_delta_us(0)
+		time_requirement_us(0)
 	{}
 
 	SchedCb callback;
-	uint32_t last_run_us, period_us, time_requirement_us, max_delta_us;
+	uint32_t last_run_us, period_us, time_requirement_us;
 };
 
 void scheduler_add(TaskId tid, const Task &task);

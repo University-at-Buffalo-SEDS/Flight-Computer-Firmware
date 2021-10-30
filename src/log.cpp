@@ -37,7 +37,7 @@ void log_setup()
 	flight_num = EEPROM.read(EEPROM_FLIGHT) % FLIGHT_FLASH_FLIGHTS;
 	current_page = FLIGHT_FLASH_FLIGHT_PAGES * flight_num;
 
-	scheduler_add(TaskId::LogFlush, Task(log_step, 100'000L, 30'000L, 250'000L));
+	scheduler_add(TaskId::LogFlush, Task(log_step, 100'000L, 30'000L));
 }
 
 void log_start()

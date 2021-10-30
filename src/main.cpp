@@ -72,7 +72,7 @@ void setup()
 
 	scheduler_add(TaskId::Deployment, Task(deployment_step, KALMAN_PERIOD * 1000L, 2500));
 	scheduler_add(TaskId::ChannelTimeout, Task(channel_step,
-			CHANNEL_FIRE_TIME * 100L, 10, CHANNEL_FIRE_TIME * 200L));
+			CHANNEL_FIRE_TIME * 100L, 10));
 	scheduler_add(TaskId::Command, Task(command_step, 100'000L, 10));
 	scheduler_add(TaskId::Print, Task(print_step, 3'000'000L, 3000));
 	scheduler_add(TaskId::Blink, Task(blink_step, (KALMAN_PERIOD / 2) * 1000L, 20));
@@ -80,8 +80,7 @@ void setup()
 
 void loop()
 {
-	uint32_t next_run = schedule();
-	int32_t wait_time = sdelta(micros(), next_run);
+	uint32_t wait_time = schedule();
 	if (wait_time > 4) {
 		delayMicroseconds(wait_time - 4);
 	}
