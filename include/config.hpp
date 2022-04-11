@@ -9,7 +9,7 @@
 #include <array>
 #include <cstddef>
 
-#define LOG_ENABLE 1
+#define LOG_ENABLE 0
 
 // Rates which trigger a launch event (deployment will only occur
 // when apogee is detected after a launch event).  Velocity and
@@ -79,13 +79,13 @@
 // Number of milliseconds of log data write out from before launch is detected.
 #define PRELOG_MS 2000
 
-#define PIN_ADXL345_CS PA8
-#define PIN_BMP280_CS PA9
-#define PIN_FLASH_CS PB11
+#define PIN_ADXL345_CS 9
+#define PIN_BMP280_CS 10
+// #define PIN_FLASH_CS PB11
 //#define PIN_LAUNCH
-#define PIN_BATT_V A0
-#define PIN_SYS_V A1
-
+// #define PIN_BATT_V A0
+// #define PIN_SYS_V A1
+  
 // How long to leave the fire channels active, in milliseconds
 #define CHANNEL_FIRE_TIME 1000
 
@@ -100,16 +100,16 @@ enum class Channel {
 };
 
 constexpr std::array<ChannelConfig, (size_t)Channel::Count> channel_config = {
-	ChannelConfig {PC0},
-	ChannelConfig {PC1}
+	ChannelConfig {18},
+	ChannelConfig {17}
 };
 
-#define FLIGHT_FLASH_MOSI_PIN PB15
-#define FLIGHT_FLASH_MISO_PIN PB14
-#define FLIGHT_FLASH_SCK_PIN PB13
+// #define FLIGHT_FLASH_MOSI_PIN PB15
+// #define FLIGHT_FLASH_MISO_PIN PB14
+// #define FLIGHT_FLASH_SCK_PIN PB13
 
-#define GPS_SERIAL Serial2
-#define XBEE_SERIAL Serial1
+// #define GPS_SERIAL Serial2
+// #define XBEE_SERIAL Serial1
 
 #define EEPROM_FLIGHT 0
 

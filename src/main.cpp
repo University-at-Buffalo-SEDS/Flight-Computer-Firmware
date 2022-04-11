@@ -1,10 +1,10 @@
 #include "accel.hpp"
 #include "baro.hpp"
 #include "config.hpp"
-#include "gps.hpp"
+// #include "gps.hpp"
 #include "kalman.hpp"
-#include "log.hpp"
-#include "radio.hpp"
+// #include "log.hpp"
+// #include "radio.hpp"
 #include "scheduler.hpp"
 #include "util.hpp"
 
@@ -50,11 +50,11 @@ void setup()
 	pinMode(LED_BUILTIN, OUTPUT);
 	digitalWrite(LED_BUILTIN, HIGH);
 
-	pinMode(PIN_BATT_V, INPUT_ANALOG);
-	pinMode(PIN_SYS_V, INPUT_ANALOG);
+	// pinMode(PIN_BATT_V, INPUT_ANALOG);
+	// pinMode(PIN_SYS_V, INPUT_ANALOG);
 	analogReadResolution(12);  // Enable full resolution
 
-	Serial.begin(2'250'000);
+	Serial.begin(9'600);
 
 	Serial.println(F("Flight Computer " __DATE__ " " __TIME__));
 
@@ -62,13 +62,13 @@ void setup()
 
 	SPI.begin();
 
-	gps_setup();
+	// gps_setup();
 	baro_setup();
 	accel_setup();
 #if LOG_ENABLE
-	log_setup();
+	// log_setup();
 #endif
-	radio_setup();
+	// radio_setup();
 
 	scheduler_add(TaskId::Deployment, Task(deployment_step, KALMAN_PERIOD * 1000L, 2500));
 	scheduler_add(TaskId::ChannelTimeout, Task(channel_step,
@@ -111,7 +111,7 @@ void command_step()
 {
 	switch (Serial.read()) {
 	case 'r':
-		log_print_all();
+		// log_print_all();
 		break;
 	default:
 		Serial.println("Unrecognized command.");
@@ -128,7 +128,7 @@ void blink_step()
 
 void print_step()
 {
-	gps_print();
+	// gps_print();
 	accel_print();
 	baro_print();
 }
@@ -148,7 +148,7 @@ void deployment_step()
 	static bool send_now = true;
 	uint32_t step_time = millis();
 
-	if (isnan(raw_alt) || isnan(accel[0])) {
+	if (std::isnan(raw_alt) || std::isnan(accel[0])) {
 		// Wait until the next run, by which time we may have new data.
 		return;
 	}
@@ -193,7 +193,7 @@ void deployment_step()
 			digitalWrite(PIN_LAUNCH, HIGH);
 #endif
 #if LOG_ENABLE
-			log_start();
+			// log_start();
 #endif
 			send_now = true;
 		}
@@ -248,13 +248,13 @@ void deployment_step()
 		}
 	}
 
-	uint32_t batt_v = analogRead(PIN_BATT_V);
-	Serial.print("Raw batt V: ");
-	Serial.println(batt_v);
-	batt_v = map(batt_v, BATT_MIN_READING, BATT_MAX_READING, 0, BATT_MAX_VOLTAGE);
+	// uint32_t batt_v = analogRead(PIN_BATT_V);
+	// Serial.print("Raw batt V: ");
+	// Serial.println(batt_v);
+	// batt_v = map(batt_v, BATT_MIN_READING, BATT_MAX_READING, 0, BATT_MAX_VOLTAGE);
 
-	uint32_t sys_v = analogRead(PIN_SYS_V);
-	sys_v = map(sys_v, SYS_MIN_READING, SYS_MAX_READING, 0, SYS_MAX_VOLTAGE);
+	// uint32_t sys_v = analogRead(PIN_SYS_V);
+	// sys_v = map(sys_v, SYS_MIN_READING, SYS_MAX_READING, 0, SYS_MAX_VOLTAGE);
 
 #if LOG_ENABLE
 	log_add(LogMessage(
@@ -274,9 +274,18 @@ void deployment_step()
 #endif
 
 	if (send_now) {
-		radio_send(Packet(phase, step_time, kf.pos(), kf.rate(), kf.accel(),
-				alt, accel_mag, gps_get_lat(), gps_get_lon(), apogee,
-				baro_get_temp(), batt_v));
+		Serial.println("Step Time: " + step_time);
+		Serial.print("Pos: ");
+		Serial.println(kf.pos());
+		Serial.println(kf.rate());
+		Serial.println(kf.accel());
+		Serial.println(alt);
+		Serial.println(accel_mag);
+		Serial.println(apogee);
+		Serial.println(baro_get_temp());
+		// radio_send(Packet(phase, step_time, kf.pos(), kf.rate(), kf.accel(),
+		// 		alt, accel_mag, gps_get_lat(), gps_get_lon(), apogee,
+		// 		baro_get_temp(), batt_v));
 	}
 	send_now = !send_now;
 }
