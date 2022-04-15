@@ -15,8 +15,8 @@
 // when apogee is detected after a launch event).  Velocity and
 // acceleration must be greater than both of these for a launch
 // event to be detected.
-#define LAUNCH_VELOCITY 8
-#define LAUNCH_ACCEL 20
+#define LAUNCH_VELOCITY 0
+#define LAUNCH_ACCEL 0
 
 // Altitude and velocity and acceleration below which landing will
 // be detected.  Acceleration is comphensated for gravity.

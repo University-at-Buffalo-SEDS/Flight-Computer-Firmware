@@ -52,7 +52,7 @@ void setup()
 
 	// pinMode(PIN_BATT_V, INPUT_ANALOG);
 	// pinMode(PIN_SYS_V, INPUT_ANALOG);
-	analogReadResolution(12);  // Enable full resolution
+	// analogReadResolution(12);  // Enable full resolution
 
 	Serial.begin(9'600);
 
@@ -114,7 +114,7 @@ void command_step()
 		// log_print_all();
 		break;
 	default:
-		Serial.println("Unrecognized command.");
+		// Serial.println("Unrecognized command.");
 		break;
 	}
 }
@@ -277,12 +277,38 @@ void deployment_step()
 		Serial.println("Step Time: " + step_time);
 		Serial.print("Pos: ");
 		Serial.println(kf.pos());
+		Serial.print("Vel: ");
 		Serial.println(kf.rate());
+		Serial.print("Accel: ");
 		Serial.println(kf.accel());
+		Serial.print("Alt: ");
 		Serial.println(alt);
+		Serial.print("Mag: ");
 		Serial.println(accel_mag);
+		Serial.print("Apogee: ");
 		Serial.println(apogee);
+		Serial.print("Temp: ");
 		Serial.println(baro_get_temp());
+		switch (phase) {
+			case FlightPhase::Startup:
+				Serial.println("Phase: Startup");
+				break;
+			case FlightPhase::Launched:
+				Serial.println("Phase: Launched");
+				break;
+			case FlightPhase::Landed:
+				Serial.println("Phase: Landed");
+				break;
+			case FlightPhase::Idle:
+				Serial.println("Phase: Idle");
+				break;
+			case FlightPhase::DescendingWithDrogue:
+				Serial.println("Phase: Descending w/ Drogue");
+				break;
+			case FlightPhase::DescendingWithMain:
+				Serial.println("Phase: Descending w/ Main");
+				break;
+		}
 		// radio_send(Packet(phase, step_time, kf.pos(), kf.rate(), kf.accel(),
 		// 		alt, accel_mag, gps_get_lat(), gps_get_lon(), apogee,
 		// 		baro_get_temp(), batt_v));
