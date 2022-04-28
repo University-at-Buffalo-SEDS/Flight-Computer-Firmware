@@ -12,10 +12,10 @@ void scheduler_add(TaskId tid, const Task &task)
 
 static void run_task(uint32_t sched_start, uint32_t time_since_last_run, Task *task, uint8_t task_id) {
 	uint32_t task_start = micros();
-	Serial.print("Running task: ");
-	Serial.println(task_id);
+	// Serial.print("Running task: ");
+	
 	task->callback();
-	Serial.println("Done");
+	// Serial.println("Done");
 	uint32_t task_time = delta(task_start, micros());
 
 	// Warn if any individual task takes too long.

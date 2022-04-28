@@ -15,8 +15,8 @@
 // when apogee is detected after a launch event).  Velocity and
 // acceleration must be greater than both of these for a launch
 // event to be detected.
-#define LAUNCH_VELOCITY 0
-#define LAUNCH_ACCEL 0
+#define LAUNCH_VELOCITY 8
+#define LAUNCH_ACCEL 20
 
 // Altitude and velocity and acceleration below which landing will
 // be detected.  Acceleration is comphensated for gravity.
@@ -108,7 +108,7 @@ constexpr std::array<ChannelConfig, (size_t)Channel::Count> channel_config = {
 // #define FLIGHT_FLASH_MISO_PIN PB14
 // #define FLIGHT_FLASH_SCK_PIN PB13
 
-// #define GPS_SERIAL Serial2
+#define GPS_SERIAL Serial1
 // #define XBEE_SERIAL Serial1
 
 #define EEPROM_FLIGHT 0

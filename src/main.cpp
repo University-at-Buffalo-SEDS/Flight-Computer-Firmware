@@ -1,7 +1,7 @@
 #include "accel.hpp"
 #include "baro.hpp"
 #include "config.hpp"
-// #include "gps.hpp"
+#include "gps.hpp"
 #include "kalman.hpp"
 // #include "log.hpp"
 // #include "radio.hpp"
@@ -52,7 +52,7 @@ void setup()
 
 	// pinMode(PIN_BATT_V, INPUT_ANALOG);
 	// pinMode(PIN_SYS_V, INPUT_ANALOG);
-	// analogReadResolution(12);  // Enable full resolution
+	analogReadResolution(12);  // Enable full resolution
 
 	Serial.begin(9'600);
 
@@ -62,7 +62,7 @@ void setup()
 
 	SPI.begin();
 
-	// gps_setup();
+	gps_setup();
 	baro_setup();
 	accel_setup();
 #if LOG_ENABLE
@@ -128,7 +128,7 @@ void blink_step()
 
 void print_step()
 {
-	// gps_print();
+	gps_print();
 	accel_print();
 	baro_print();
 }
@@ -274,7 +274,8 @@ void deployment_step()
 #endif
 
 	if (send_now) {
-		Serial.println("Step Time: " + step_time);
+		Serial.print("Step Time: ");
+		Serial.println(step_time);
 		Serial.print("Pos: ");
 		Serial.println(kf.pos());
 		Serial.print("Vel: ");
@@ -308,10 +309,12 @@ void deployment_step()
 			case FlightPhase::DescendingWithMain:
 				Serial.println("Phase: Descending w/ Main");
 				break;
-		}
+		} 
+		Serial.println();
 		// radio_send(Packet(phase, step_time, kf.pos(), kf.rate(), kf.accel(),
 		// 		alt, accel_mag, gps_get_lat(), gps_get_lon(), apogee,
 		// 		baro_get_temp(), batt_v));
 	}
+
 	send_now = !send_now;
 }

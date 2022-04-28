@@ -20,41 +20,40 @@ static float last_accel[3] = {NAN, NAN, NAN};
 #define ADXL_SCK  (13)
 #define ADXL_MISO (12)
 #define ADXL_MOSI (11)
-#define ADXL_CS   (9)
 
-Adafruit_ADXL345_Unified accel = Adafruit_ADXL345_Unified(ADXL_SCK, ADXL_MISO, ADXL_MOSI, ADXL_CS);
+Adafruit_ADXL345_Unified accel = Adafruit_ADXL345_Unified(ADXL_SCK, ADXL_MISO, ADXL_MOSI, PIN_ADXL345_CS);
 
 void accel_step();
 
-static void write_reg(uint8_t reg, uint8_t data)
-{
-	digitalWrite(PIN_ADXL345_CS, LOW);
-	SPI.transfer(reg);
-	SPI.transfer(data);
-	digitalWrite(PIN_ADXL345_CS, HIGH);
-}
+// static void write_reg(uint8_t reg, uint8_t data)
+// {
+// 	digitalWrite(PIN_ADXL345_CS, LOW);
+// 	SPI.transfer(reg);
+// 	SPI.transfer(data);
+// 	digitalWrite(PIN_ADXL345_CS, HIGH);
+// }
 
-static uint8_t read_reg(uint8_t reg)
-{
-	digitalWrite(PIN_ADXL345_CS, LOW);
-	SPI.transfer(reg | 0x80);
-	uint8_t res = SPI.transfer(0);
-	digitalWrite(PIN_ADXL345_CS, HIGH);
-	return res;
-}
+// static uint8_t read_reg(uint8_t reg)
+// {
+// 	digitalWrite(PIN_ADXL345_CS, LOW);
+// 	SPI.transfer(reg | 0x80);
+// 	uint8_t res = SPI.transfer(0);
+// 	digitalWrite(PIN_ADXL345_CS, HIGH);
+// 	return res;
+// }
 
-static void read_buf(uint8_t reg, uint8_t *data, uint8_t length)
-{
-	digitalWrite(PIN_ADXL345_CS, LOW);
-	SPI.transfer(reg | 0x80 | 0x40);
-	for (uint8_t i = 0; i < length; ++i) {
-		data[i] = SPI.transfer(0);
-	}
-	digitalWrite(PIN_ADXL345_CS, HIGH);
-}
+// static void read_buf(uint8_t reg, uint8_t *data, uint8_t length)
+// {
+// 	digitalWrite(PIN_ADXL345_CS, LOW);
+// 	SPI.transfer(reg | 0x80 | 0x40);
+// 	for (uint8_t i = 0; i < length; ++i) {
+// 		data[i] = SPI.transfer(0);
+// 	}
+// 	digitalWrite(PIN_ADXL345_CS, HIGH);
+// }
 
 #define ADXL345_REG_DEVID               (0x00)    // Device ID
-#define ADXL345_REG_THRESH_TAP          (0x1D)    // Tap threshold
+#define ADXL345_sREG_THRESH_TAP          (0x1D)    // Tap threshold
 #define ADXL345_REG_OFSX                (0x1E)    // X-axis offset
 #define ADXL345_REG_OFSY                (0x1F)    // Y-axis offset
 #define ADXL345_REG_OFSZ                (0x20)    // Z-axis offset
