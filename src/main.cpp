@@ -50,6 +50,9 @@ void setup()
 	pinMode(LED_BUILTIN, OUTPUT);
 	digitalWrite(LED_BUILTIN, HIGH);
 
+	pinMode(PIN_BUZZER, OUTPUT);
+	digitalWrite(PIN_BUZZER, LOW);
+
 	// pinMode(PIN_BATT_V, INPUT_ANALOG);
 	// pinMode(PIN_SYS_V, INPUT_ANALOG);
 	analogReadResolution(12);  // Enable full resolution
