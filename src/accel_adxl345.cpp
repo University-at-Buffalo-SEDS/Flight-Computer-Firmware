@@ -107,7 +107,10 @@ void accel_setup()
   	{
     /* There was a problem detecting the ADXL345 ... check your connections */
     	Serial.println(F("ADXL345 not found!"));
-    	abort();
+    	// abort();
+		while (!accel.begin()) {
+			delay(500);
+		}
 	} else {
 		Serial.println(F("ADXL345 detected."));
 	}
