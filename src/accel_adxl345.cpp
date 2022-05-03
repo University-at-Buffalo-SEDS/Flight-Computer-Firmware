@@ -53,7 +53,7 @@ void accel_step();
 // }
 
 #define ADXL345_REG_DEVID               (0x00)    // Device ID
-#define ADXL345_sREG_THRESH_TAP          (0x1D)    // Tap threshold
+#define ADXL345_sREG_THRESH_TAP          (0x1D)   // Tap threshold
 #define ADXL345_REG_OFSX                (0x1E)    // X-axis offset
 #define ADXL345_REG_OFSY                (0x1F)    // Y-axis offset
 #define ADXL345_REG_OFSZ                (0x20)    // Z-axis offset
@@ -107,10 +107,14 @@ void accel_setup()
   	{
     /* There was a problem detecting the ADXL345 ... check your connections */
     	Serial.println(F("ADXL345 not found!"));
-    	// abort();
-		while (!accel.begin()) {
-			delay(500);
-		}
+    	abort();
+		// while (!accel.begin()) {
+		// 	Serial.println(F("ADXL345 not found!"));
+		// 	static bool on = false;
+		// 	digitalWrite(LED_BUILTIN, on ? HIGH : LOW);
+		// 	on = !on;
+		// 	delay(500);
+		// }
 	} else {
 		Serial.println(F("ADXL345 detected."));
 	}
