@@ -2,10 +2,7 @@
 #include "scheduler.hpp"
 #include "util.hpp"
 
-#include <Wire.h>
 #include <SPI.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_ADXL345_U.h>
 
 // Adafruit library does not support hardware SPI and reads the
 // axes one at a time, contrary to what the datasheet recommends.
@@ -14,46 +11,40 @@
 // May also cause unexpected delays when the interrupt triggers.
 #define ADXL345_USE_INT 0
 
-// static const SPISettings spi_settings(5'000'000, MSBFIRST, SPI_MODE3);
+static const SPISettings spi_settings(5'000'000, MSBFIRST, SPI_MODE3);
 static float last_accel[3] = {NAN, NAN, NAN};
-
-#define ADXL_SCK  (13)
-#define ADXL_MISO (12)
-#define ADXL_MOSI (11)
-
-Adafruit_ADXL345_Unified accel = Adafruit_ADXL345_Unified(ADXL_SCK, ADXL_MISO, ADXL_MOSI, PIN_ADXL345_CS);
 
 void accel_step();
 
-// static void write_reg(uint8_t reg, uint8_t data)
-// {
-// 	digitalWrite(PIN_ADXL345_CS, LOW);
-// 	SPI.transfer(reg);
-// 	SPI.transfer(data);
-// 	digitalWrite(PIN_ADXL345_CS, HIGH);
-// }
+static void write_reg(uint8_t reg, uint8_t data)
+{
+	digitalWrite(PIN_ADXL345_CS, LOW);
+	SPI.transfer(reg);
+	SPI.transfer(data);
+	digitalWrite(PIN_ADXL345_CS, HIGH);
+}
 
-// static uint8_t read_reg(uint8_t reg)
-// {
-// 	digitalWrite(PIN_ADXL345_CS, LOW);
-// 	SPI.transfer(reg | 0x80);
-// 	uint8_t res = SPI.transfer(0);
-// 	digitalWrite(PIN_ADXL345_CS, HIGH);
-// 	return res;
-// }
+static uint8_t read_reg(uint8_t reg)
+{
+	digitalWrite(PIN_ADXL345_CS, LOW);
+	SPI.transfer(reg | 0x80);
+	uint8_t res = SPI.transfer(0);
+	digitalWrite(PIN_ADXL345_CS, HIGH);
+	return res;
+}
 
-// static void read_buf(uint8_t reg, uint8_t *data, uint8_t length)
-// {
-// 	digitalWrite(PIN_ADXL345_CS, LOW);
-// 	SPI.transfer(reg | 0x80 | 0x40);
-// 	for (uint8_t i = 0; i < length; ++i) {
-// 		data[i] = SPI.transfer(0);
-// 	}
-// 	digitalWrite(PIN_ADXL345_CS, HIGH);
-// }
+static void read_buf(uint8_t reg, uint8_t *data, uint8_t length)
+{
+	digitalWrite(PIN_ADXL345_CS, LOW);
+	SPI.transfer(reg | 0x80 | 0x40);
+	for (uint8_t i = 0; i < length; ++i) {
+		data[i] = SPI.transfer(0);
+	}
+	digitalWrite(PIN_ADXL345_CS, HIGH);
+}
 
 #define ADXL345_REG_DEVID               (0x00)    // Device ID
-#define ADXL345_sREG_THRESH_TAP          (0x1D)   // Tap threshold
+#define ADXL345_REG_THRESH_TAP          (0x1D)    // Tap threshold
 #define ADXL345_REG_OFSX                (0x1E)    // X-axis offset
 #define ADXL345_REG_OFSY                (0x1F)    // Y-axis offset
 #define ADXL345_REG_OFSZ                (0x20)    // Z-axis offset
@@ -90,43 +81,27 @@ void accel_setup()
 #if ADXL345_USE_INT
 	pinMode(PIN_ADXL345_INT, INPUT_PULLUP);
 #endif
-	// pinMode(PIN_ADXL345_CS, OUTPUT);
-	// digitalWrite(PIN_ADXL345_CS, HIGH);
+	pinMode(PIN_ADXL345_CS, OUTPUT);
+	digitalWrite(PIN_ADXL345_CS, HIGH);
 
-	// SPI.beginTransaction(spi_settings);
+	SPI.beginTransaction(spi_settings);
 
-	// if (read_reg(ADXL345_REG_DEVID) != 0xE5) {
-	// 	Serial.println(F("ADXL345 not found!"));
-	// 	abort();
-	// } else {
-	// 	Serial.println(F("ADXL345 detected."));
-	// }
+	Serial.println(read_reg(ADXL345_REG_DEVID));
+	Serial.println(read_reg(ADXL345_REG_DEVID));
+	Serial.println(read_reg(ADXL345_REG_DEVID));
 
-	/* Initialise the sensor */
-  	if(!accel.begin())
-  	{
-    /* There was a problem detecting the ADXL345 ... check your connections */
-    	Serial.println(F("ADXL345 not found!"));
-    	abort();
-		// while (!accel.begin()) {
-		// 	Serial.println(F("ADXL345 not found!"));
-		// 	static bool on = false;
-		// 	digitalWrite(LED_BUILTIN, on ? HIGH : LOW);
-		// 	on = !on;
-		// 	delay(500);
-		// }
+	if (read_reg(ADXL345_REG_DEVID) != 0xE5) {
+		Serial.println(F("ADXL345 not found!"));
+		abort();
 	} else {
 		Serial.println(F("ADXL345 detected."));
 	}
 
-	accel.setRange(ADXL345_RANGE_16_G);
-	accel.setDataRate(ADXL345_DATARATE_25_HZ);
-
 	// Set measure bit
-	// write_reg(ADXL345_REG_POWER_CTL, 0b0000'1000);
+	write_reg(ADXL345_REG_POWER_CTL, 0b0000'1000);
 
-	// write_reg(ADXL345_REG_DATA_FORMAT, 0b0010'1011); // 16G full range
-	// write_reg(ADXL345_REG_BW_RATE, 0b0000'0111); // 12.5Hz update rate
+	write_reg(ADXL345_REG_DATA_FORMAT, 0b0010'1011); // 16G full range
+	write_reg(ADXL345_REG_BW_RATE, 0b0000'0111); // 12.5Hz update rate
 
 #if ADXL345_USE_INT
 	write_reg(ADXL345_REG_INT_MAP, 0b0000'0000); // All interrupts to INT1
@@ -134,7 +109,7 @@ void accel_setup()
 	SPI.endTransaction();
 	attachInterrupt(digitalPinToInterrupt(PIN_ADXL345_INT), accel_step, FALLING);
 #else
-	// SPI.endTransaction();
+	SPI.endTransaction();
 	scheduler_add(TaskId::Accel, Task(accel_step, KALMAN_PERIOD * 1000L, 120));
 #endif
 
@@ -144,24 +119,17 @@ void accel_setup()
 // Takes less than 50us.
 void accel_step()
 {
-	// uint8_t data[6];
-	// SPI.beginTransaction(spi_settings);
-	// read_buf(ADXL345_REG_DATAX0, data, sizeof(data));
-	// SPI.endTransaction();
+	uint8_t data[6];
+	SPI.beginTransaction(spi_settings);
+	read_buf(ADXL345_REG_DATAX0, data, sizeof(data));
+	SPI.endTransaction();
 
-	sensors_event_t event; 
-  	accel.getEvent(&event);
-
-	// int16_t raw_x = word(data[1], data[0]);
-	// int16_t raw_y = word(data[3], data[2]);
-	// int16_t raw_z = word(data[5], data[4]);
-	// last_accel[0] = (float)raw_x * ADXL345_FULL_SCALE_MULTIPLIER * STANDARD_GRAVITY;
-	// last_accel[1] = (float)raw_y * ADXL345_FULL_SCALE_MULTIPLIER * STANDARD_GRAVITY;
-	// last_accel[2] = (float)raw_z * ADXL345_FULL_SCALE_MULTIPLIER * STANDARD_GRAVITY;
-
-	last_accel[0] = event.acceleration.x;
-	last_accel[1] = event.acceleration.y;
-	last_accel[2] = event.acceleration.z;
+	int16_t raw_x = word(data[1], data[0]);
+	int16_t raw_y = word(data[3], data[2]);
+	int16_t raw_z = word(data[5], data[4]);
+	last_accel[0] = (float)raw_x * ADXL345_FULL_SCALE_MULTIPLIER * STANDARD_GRAVITY;
+	last_accel[1] = (float)raw_y * ADXL345_FULL_SCALE_MULTIPLIER * STANDARD_GRAVITY;
+	last_accel[2] = (float)raw_z * ADXL345_FULL_SCALE_MULTIPLIER * STANDARD_GRAVITY;
 }
 
 // Returned values must be in m/s^2
