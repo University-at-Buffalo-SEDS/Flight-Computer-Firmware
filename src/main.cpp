@@ -3,8 +3,8 @@
 #include "config.hpp"
 #include "gps.hpp"
 #include "kalman.hpp"
-// #include "log.hpp"
-// #include "radio.hpp"
+#include "log.hpp"
+#include "radio.hpp"
 #include "scheduler.hpp"
 #include "util.hpp"
 
@@ -114,10 +114,10 @@ void command_step()
 {
 	switch (Serial.read()) {
 	case 'r':
-		// log_print_all();
+		log_print_all();
 		break;
 	default:
-		// Serial.println("Unrecognized command.");
+		Serial.println("Unrecognized command.");
 		break;
 	}
 }
