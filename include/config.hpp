@@ -83,7 +83,7 @@
 #define PIN_ADXL345_CS 10
 #define PIN_BMP280_CS  9
 #define PIN_FLASH_CS   8
-//#define PIN_LAUNCH
+// #define PIN_LAUNCH
 // #define PIN_BATT_V A0
 // #define PIN_SYS_V A1
   
@@ -109,8 +109,8 @@ constexpr std::array<ChannelConfig, (size_t)Channel::Count> channel_config = {
 // #define FLIGHT_FLASH_MISO_PIN PB14
 // #define FLIGHT_FLASH_SCK_PIN PB13
 
-#define GPS_SERIAL Serial1
-// #define XBEE_SERIAL Serial1
+#define GPS_SERIAL Serial3
+#define XBEE_SERIAL Serial5
 
 #define EEPROM_FLIGHT 0
 
