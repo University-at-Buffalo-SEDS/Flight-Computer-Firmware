@@ -69,9 +69,9 @@ void setup()
 	baro_setup();
 	accel_setup();
 #if LOG_ENABLE
-	// log_setup();
+	log_setup();
 #endif
-	// radio_setup();
+	radio_setup();
 
 	scheduler_add(TaskId::Deployment, Task(deployment_step, KALMAN_PERIOD * 1000L, 2500));
 	scheduler_add(TaskId::ChannelTimeout, Task(channel_step,
