@@ -50,6 +50,15 @@ void setup()
 	pinMode(LED_BUILTIN, OUTPUT);
 	digitalWrite(LED_BUILTIN, HIGH);
 
+	pinMode(LED_RED, OUTPUT);
+	digitalWrite(LED_RED, LOW);
+
+	pinMode(LED_GREEN, OUTPUT);
+	digitalWrite(LED_GREEN, LOW);
+
+	pinMode(LED_BLUE, OUTPUT);
+	digitalWrite(LED_BLUE, LOW);
+
 	pinMode(PIN_BUZZER, OUTPUT);
 	digitalWrite(PIN_BUZZER, LOW);
 
@@ -134,6 +143,25 @@ void print_step()
 	gps_print();
 	accel_print();
 	baro_print();
+}
+
+void rgb_step()
+{
+	static int counter = 0;
+	const int leds[LEDS_NUM] = {LED_RED, LED_GREEN, LED_BLUE};
+
+	for (int i = 0; i < LEDS_NUM; i++) {
+		if (counter < 100) {
+			digitalWrite(leds[i], HIGH);
+		} else {
+			digitalWrite(leds[i], LOW);
+		}
+	}
+
+	counter++;
+	if (counter > LED_INTERVALS) {
+		counter = 0;
+	}
 }
 
 void deployment_step()
