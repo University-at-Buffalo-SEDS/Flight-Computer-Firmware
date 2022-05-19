@@ -25,6 +25,8 @@ void print_step();
 void deployment_step();
 void channel_step();
 void channel_fire(Channel chan);
+void rgb_step();
+void rgb_color();
 
 static std::array<ChannelStatus, channel_config.size()> channel_status;
 
@@ -50,6 +52,17 @@ void setup()
 	pinMode(LED_BUILTIN, OUTPUT);
 	digitalWrite(LED_BUILTIN, HIGH);
 
+	// Setup RGB leds
+	pinMode(LED_RED, OUTPUT);
+	digitalWrite(LED_RED, LOW);
+
+	pinMode(LED_GREEN, OUTPUT);
+	digitalWrite(LED_GREEN, LOW);
+
+	pinMode(LED_BLUE, OUTPUT);
+	digitalWrite(LED_BLUE, LOW);
+
+	// Setup Buzzer
 	pinMode(PIN_BUZZER, OUTPUT);
 	digitalWrite(PIN_BUZZER, LOW);
 
@@ -79,6 +92,8 @@ void setup()
 	scheduler_add(TaskId::Command, Task(command_step, 100'000L, 10));
 	scheduler_add(TaskId::Print, Task(print_step, 3'000'000L, 3000));
 	scheduler_add(TaskId::Blink, Task(blink_step, (KALMAN_PERIOD / 2) * 1000L, 20));
+	scheduler_add(TaskId::RGB, Task(rgb_step, LED_PERIOD, 20));
+	rgb_color(255, 125, 0);
 }
 
 void loop()
@@ -136,6 +151,34 @@ void print_step()
 	baro_print();
 }
 
+int color[LEDS_NUM] = {0, 0, 0};
+
+void rgb_color(int r, int g, int b)
+{
+	color[0] = r;
+	color[1] = g;
+	color[2] = b;
+}
+
+void rgb_step()
+{
+	static int counter = 0;
+	const int leds[LEDS_NUM] = {LED_RED, LED_GREEN, LED_BLUE};
+
+	for (int i = 0; i < LEDS_NUM; i++) {
+		if (counter < color[i]) {
+			digitalWrite(leds[i], HIGH);
+		} else {
+			digitalWrite(leds[i], LOW);
+		}
+	}
+
+	counter++;
+	if (counter > LED_INTERVALS) {
+		counter = 0;
+	}
+}
+
 void deployment_step()
 {
 	static uint32_t land_time = 0;
@@ -168,6 +211,7 @@ void deployment_step()
 				!gravity_est_state.full()) {
 			return;
 		}
+		rgb_color(125, 255, 0);
 		phase = FlightPhase::Idle;
 	}
 
@@ -191,6 +235,7 @@ void deployment_step()
 	if (phase == FlightPhase::Idle) {
 		// Detect launch
 		if (kf.rate() > LAUNCH_VELOCITY && kf.accel() > LAUNCH_ACCEL) {
+			rgb_color(0, 255, 125);
 			phase = FlightPhase::Launched;
 #ifdef PIN_LAUNCH
 			digitalWrite(PIN_LAUNCH, HIGH);
@@ -205,6 +250,7 @@ void deployment_step()
 		if (kf.rate() < 0) {
 			apogee = kf.pos();
 			channel_fire(Channel::Drogue);
+			rgb_color(0, 125, 255);
 			phase = FlightPhase::DescendingWithDrogue;
 
 			Serial.println(F("===================================== Apogee!"));
@@ -223,6 +269,7 @@ void deployment_step()
 			|| kf.rate() < -(FAILSAFE_VELOCITY)
 #endif
 				) && delta(channel_status[(size_t)Channel::Drogue].fire_time, step_time) > 3000) {
+			rgb_color(125, 0, 255);
 			phase = FlightPhase::DescendingWithMain;
 			channel_fire(Channel::Main);
 
@@ -239,6 +286,7 @@ void deployment_step()
 					land_time = 1;
 				}
 			} else if (delta(land_time, step_time) > LANDED_TIME_MS) { // Must stay landed long enough
+				rgb_color(255, 0, 125);
 				phase = FlightPhase::Landed;
 				Serial.println(F("===================================== Landed!"));
 				send_now = true;
@@ -251,6 +299,7 @@ void deployment_step()
 		}
 	}
 
+	uint32_t batt_v = 0;
 	// uint32_t batt_v = analogRead(PIN_BATT_V);
 	// Serial.print("Raw batt V: ");
 	// Serial.println(batt_v);
@@ -277,46 +326,9 @@ void deployment_step()
 #endif
 
 	if (send_now) {
-		Serial.print("Step Time: ");
-		Serial.println(step_time);
-		Serial.print("Pos: ");
-		Serial.println(kf.pos());
-		Serial.print("Vel: ");
-		Serial.println(kf.rate());
-		Serial.print("Accel: ");
-		Serial.println(kf.accel());
-		Serial.print("Alt: ");
-		Serial.println(alt);
-		Serial.print("Mag: ");
-		Serial.println(accel_mag);
-		Serial.print("Apogee: ");
-		Serial.println(apogee);
-		Serial.print("Temp: ");
-		Serial.println(baro_get_temp());
-		switch (phase) {
-			case FlightPhase::Startup:
-				Serial.println("Phase: Startup");
-				break;
-			case FlightPhase::Launched:
-				Serial.println("Phase: Launched");
-				break;
-			case FlightPhase::Landed:
-				Serial.println("Phase: Landed");
-				break;
-			case FlightPhase::Idle:
-				Serial.println("Phase: Idle");
-				break;
-			case FlightPhase::DescendingWithDrogue:
-				Serial.println("Phase: Descending w/ Drogue");
-				break;
-			case FlightPhase::DescendingWithMain:
-				Serial.println("Phase: Descending w/ Main");
-				break;
-		} 
-		Serial.println();
-		// radio_send(Packet(phase, step_time, kf.pos(), kf.rate(), kf.accel(),
-		// 		alt, accel_mag, gps_get_lat(), gps_get_lon(), apogee,
-		// 		baro_get_temp(), batt_v));
+		radio_send(Packet(phase, step_time, kf.pos(), kf.rate(), kf.accel(),
+				alt, accel_mag, gps_get_lat(), gps_get_lon(), apogee,
+				baro_get_temp(), batt_v));
 	}
 
 	send_now = !send_now;
