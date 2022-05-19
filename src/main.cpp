@@ -26,7 +26,7 @@ void deployment_step();
 void channel_step();
 void channel_fire(Channel chan);
 void rgb_step();
-void rgb_color();
+void rgb_color(int r, int g, int b);
 
 static std::array<ChannelStatus, channel_config.size()> channel_status;
 
