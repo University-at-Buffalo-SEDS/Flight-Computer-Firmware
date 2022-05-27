@@ -92,8 +92,7 @@ void setup()
 	scheduler_add(TaskId::Command, Task(command_step, 100'000L, 10));
 	scheduler_add(TaskId::Print, Task(print_step, 3'000'000L, 3000));
 	scheduler_add(TaskId::Blink, Task(blink_step, (KALMAN_PERIOD / 2) * 1000L, 20));
-	scheduler_add(TaskId::RGB, Task(rgb_step, LED_PERIOD, 20));
-	rgb_color(255, 125, 0);
+	rgb_color(1, 0, 0);
 }
 
 void loop()
@@ -151,32 +150,11 @@ void print_step()
 	baro_print();
 }
 
-int color[LEDS_NUM] = {0, 0, 0};
-
 void rgb_color(int r, int g, int b)
 {
-	color[0] = r;
-	color[1] = g;
-	color[2] = b;
-}
-
-void rgb_step()
-{
-	static int counter = 0;
-	const int leds[LEDS_NUM] = {LED_RED, LED_GREEN, LED_BLUE};
-
-	for (int i = 0; i < LEDS_NUM; i++) {
-		if (counter < color[i]) {
-			digitalWrite(leds[i], HIGH);
-		} else {
-			digitalWrite(leds[i], LOW);
-		}
-	}
-
-	counter++;
-	if (counter > LED_INTERVALS) {
-		counter = 0;
-	}
+	digitalWrite(LED_RED, r ? HIGH : LOW);
+	digitalWrite(LED_GREEN, g ? HIGH : LOW);
+	digitalWrite(LED_BLUE, b ? HIGH : LOW);
 }
 
 void deployment_step()
@@ -211,7 +189,7 @@ void deployment_step()
 				!gravity_est_state.full()) {
 			return;
 		}
-		rgb_color(125, 255, 0);
+		rgb_color(1, 1, 0);
 		phase = FlightPhase::Idle;
 	}
 
@@ -235,7 +213,7 @@ void deployment_step()
 	if (phase == FlightPhase::Idle) {
 		// Detect launch
 		if (kf.rate() > LAUNCH_VELOCITY && kf.accel() > LAUNCH_ACCEL) {
-			rgb_color(0, 255, 125);
+			rgb_color(0, 1, 0);
 			phase = FlightPhase::Launched;
 #ifdef PIN_LAUNCH
 			digitalWrite(PIN_LAUNCH, HIGH);
@@ -250,7 +228,7 @@ void deployment_step()
 		if (kf.rate() < 0) {
 			apogee = kf.pos();
 			channel_fire(Channel::Drogue);
-			rgb_color(0, 125, 255);
+			rgb_color(0, 1, 1);
 			phase = FlightPhase::DescendingWithDrogue;
 
 			Serial.println(F("===================================== Apogee!"));
@@ -269,7 +247,7 @@ void deployment_step()
 			|| kf.rate() < -(FAILSAFE_VELOCITY)
 #endif
 				) && delta(channel_status[(size_t)Channel::Drogue].fire_time, step_time) > 3000) {
-			rgb_color(125, 0, 255);
+			rgb_color(0, 0, 1);
 			phase = FlightPhase::DescendingWithMain;
 			channel_fire(Channel::Main);
 
@@ -286,7 +264,7 @@ void deployment_step()
 					land_time = 1;
 				}
 			} else if (delta(land_time, step_time) > LANDED_TIME_MS) { // Must stay landed long enough
-				rgb_color(255, 0, 125);
+				rgb_color(1, 0, 1);
 				phase = FlightPhase::Landed;
 				Serial.println(F("===================================== Landed!"));
 				send_now = true;
