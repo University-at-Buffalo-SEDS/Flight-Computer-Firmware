@@ -92,10 +92,6 @@
 #define LED_RED   16
 #define LED_GREEN 17
 #define LED_BLUE  18
-
-#define LED_FREQUENCY   60
-#define LED_INTERVALS   255
-#define LED_PERIOD      (1'000'000L / LED_INTERVALS / LED_FREQUENCY)
   
 // How long to leave the fire channels active, in milliseconds
 #define CHANNEL_FIRE_TIME 1000
@@ -133,4 +129,4 @@ constexpr std::array<ChannelConfig, (size_t)Channel::Count> channel_config = {
 
 // Time to wait before testing pyrochannels
 #define TEST_FIRE_DELAY 2000
-#define TEST_FIRE_UPTIME 500
+#define TEST_FIRE_UPTIME 1000
