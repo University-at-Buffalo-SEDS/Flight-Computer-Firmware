@@ -1,7 +1,11 @@
+#include <unity.h>
+#include <cstring>
+#include <cstdio>
+
 #include "config.hpp"
 
 
-void setup() {
+void test_pyrochannels() {
 
     // Sets both pins for each pyrochannel to LOW
 	for (const ChannelConfig &c : channel_config) {
@@ -15,6 +19,7 @@ void setup() {
     for (const ChannelConfig &c : channel_config) {
 		digitalWrite(c.fire_pin, HIGH);
 	}
+
     Serial.println("Fired");
     delay(TEST_FIRE_UPTIME);
 
@@ -26,8 +31,11 @@ void setup() {
     Serial.println("Test complete. Pins set to low.");
 }
 
+int main() {
+	UNITY_BEGIN();
 
-void loop() {
+	RUN_TEST(test_pyrochannels);
 
-
+	UNITY_END();
+	return 0;
 }
