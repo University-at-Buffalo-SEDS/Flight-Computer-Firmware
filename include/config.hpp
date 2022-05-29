@@ -107,8 +107,8 @@ enum class Channel {
 };
 
 constexpr std::array<ChannelConfig, (size_t)Channel::Count> channel_config = {
-	ChannelConfig {18},
-	ChannelConfig {17}
+	ChannelConfig {6},
+	ChannelConfig {7}
 };
 
 // #define FLIGHT_FLASH_MOSI_PIN PB15
