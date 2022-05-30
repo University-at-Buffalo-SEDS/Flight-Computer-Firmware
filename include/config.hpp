@@ -9,7 +9,7 @@
 #include <array>
 #include <cstddef>
 
-#define LOG_ENABLE 0
+#define LOG_ENABLE 1
 
 // Rates which trigger a launch event (deployment will only occur
 // when apogee is detected after a launch event).  Velocity and

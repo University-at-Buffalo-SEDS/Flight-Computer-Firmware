@@ -131,7 +131,7 @@ void command_step()
 		log_print_all();
 		break;
 	default:
-		Serial.println("Unrecognized command.");
+		// Serial.println("Unrecognized command.");
 		break;
 	}
 }
@@ -219,7 +219,7 @@ void deployment_step()
 			digitalWrite(PIN_LAUNCH, HIGH);
 #endif
 #if LOG_ENABLE
-			// log_start();
+			log_start();
 #endif
 			send_now = true;
 		}
@@ -283,6 +283,7 @@ void deployment_step()
 	// Serial.println(batt_v);
 	// batt_v = map(batt_v, BATT_MIN_READING, BATT_MAX_READING, 0, BATT_MAX_VOLTAGE);
 
+	uint32_t sys_v = 0;
 	// uint32_t sys_v = analogRead(PIN_SYS_V);
 	// sys_v = map(sys_v, SYS_MIN_READING, SYS_MAX_READING, 0, SYS_MAX_VOLTAGE);
 
