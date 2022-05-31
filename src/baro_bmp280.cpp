@@ -151,6 +151,11 @@ void baro_setup()
 	scheduler_add(TaskId::Baro, Task(baro_step, KALMAN_PERIOD * 1000L, 160));
 }
 
+float baro_get_pressure()
+{
+	return last_press;
+}
+
 float baro_get_altitude()
 {
 	return last_alt;
