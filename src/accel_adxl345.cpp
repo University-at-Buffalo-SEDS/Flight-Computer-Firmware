@@ -86,11 +86,8 @@ void accel_setup()
 
 	SPI.beginTransaction(spi_settings);
 
-	Serial.println(read_reg(ADXL345_REG_DEVID));
-	Serial.println(read_reg(ADXL345_REG_DEVID));
-	Serial.println(read_reg(ADXL345_REG_DEVID));
-
 	if (read_reg(ADXL345_REG_DEVID) != 0xE5) {
+		Serial.println(read_reg(ADXL345_REG_DEVID));
 		Serial.println(F("ADXL345 not found!"));
 		abort();
 	} else {
