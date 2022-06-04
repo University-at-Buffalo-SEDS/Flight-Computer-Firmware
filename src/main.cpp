@@ -299,6 +299,7 @@ void deployment_step()
 		gps_get_lon(),
 		gps_get_alt(),
 		baro_get_temp(),
+		baro_get_pressure(),
 		(uint16_t)batt_v,
 		(uint16_t)sys_v
 	));

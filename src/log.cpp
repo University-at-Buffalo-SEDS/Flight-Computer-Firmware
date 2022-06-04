@@ -169,6 +169,8 @@ static void log_print_msg(const LogMessage &msg)
 	Serial.print(',');
 	Serial.print(msg.temp);
 	Serial.print(',');
+	Serial.print(msg.pressure);
+	Serial.print(',');
 	Serial.print(msg.altitude);
 	Serial.print(',');
 	Serial.print(msg.accel_x);
