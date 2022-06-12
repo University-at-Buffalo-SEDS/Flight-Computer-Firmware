@@ -171,4 +171,8 @@ void baro_print()
 	Serial.print(F("Altitude: "));
 	Serial.print(last_alt);
 	Serial.println('m');
+
+	Serial.print(F("Pressure: "));
+	Serial.print(last_press);
+	Serial.println("Pa");
 }
