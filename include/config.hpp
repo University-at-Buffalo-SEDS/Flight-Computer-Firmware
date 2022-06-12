@@ -87,6 +87,14 @@
 // #define PIN_BATT_V A0
 // #define PIN_SYS_V A1
 
+// Buzzer timer
+// Duty on is how many KALMAN_PERIODs for the buzzer to be on
+#define BUZZER_DUTY_ON  5
+// Duty off is how many KALMAN_PERIODs for the buzzer to be off
+#define BUZZER_DUTY_OFF 15
+// Total period of a duty cycle
+#define BUZZER_DUTY_TOT (BUZZER_DUTY_ON + BUZZER_DUTY_OFF)
+
 // RGB LED
 #define LEDS_NUM  3
 #define LED_RED   16

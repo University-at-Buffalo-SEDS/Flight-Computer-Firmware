@@ -157,6 +157,18 @@ void rgb_color(int r, int g, int b)
 	digitalWrite(LED_BLUE, b ? HIGH : LOW);
 }
 
+void buzzer() {
+	static int counter = 0;
+
+	if (counter < BUZZER_DUTY_ON) {
+		digitalWrite(PIN_BUZZER, HIGH);
+	} else {
+		digitalWrite(PIN_BUZZER, LOW);
+	}
+
+	counter = (counter + 1) % BUZZER_DUTY_TOT;
+}
+
 void deployment_step()
 {
 	static uint32_t land_time = 0;
@@ -211,6 +223,9 @@ void deployment_step()
 	}
 
 	if (phase == FlightPhase::Idle) {
+		// Step the buzzer
+		buzzer();
+
 		// Detect launch
 		if (kf.rate() > LAUNCH_VELOCITY && kf.accel() > LAUNCH_ACCEL) {
 			rgb_color(0, 1, 0);
@@ -222,6 +237,9 @@ void deployment_step()
 			log_start();
 #endif
 			send_now = true;
+
+			// Turn buzzer off if we in  the launch phase
+			digitalWrite(PIN_BUZZER, LOW);
 		}
 	} else if (phase == FlightPhase::Launched) {
 		// Detect apogee
