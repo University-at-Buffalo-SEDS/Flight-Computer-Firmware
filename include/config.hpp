@@ -88,10 +88,12 @@
 // #define PIN_SYS_V A1
 
 // Buzzer timer
+// Number of times to beep once in idle state.
+#define MAX_BUZZER_CYCLES 5
 // Duty on is how many KALMAN_PERIODs for the buzzer to be on
 #define BUZZER_DUTY_ON  5
 // Duty off is how many KALMAN_PERIODs for the buzzer to be off
-#define BUZZER_DUTY_OFF 15
+#define BUZZER_DUTY_OFF 25
 // Total period of a duty cycle
 #define BUZZER_DUTY_TOT (BUZZER_DUTY_ON + BUZZER_DUTY_OFF)
 

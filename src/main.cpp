@@ -152,13 +152,19 @@ void print_step()
 
 void rgb_color(int r, int g, int b)
 {
-	digitalWrite(LED_RED, r ? HIGH : LOW);
-	digitalWrite(LED_GREEN, g ? HIGH : LOW);
-	digitalWrite(LED_BLUE, b ? HIGH : LOW);
+	// digitalWrite(LED_RED, r ? HIGH : LOW);
+	// digitalWrite(LED_GREEN, g ? HIGH : LOW);
+	// digitalWrite(LED_BLUE, b ? HIGH : LOW);
 }
 
 void buzzer() {
+	static int runs = 0;
 	static int counter = 0;
+
+	if (runs >= MAX_BUZZER_CYCLES) {
+		digitalWrite(PIN_BUZZER, LOW);
+		return;
+	}
 
 	if (counter < BUZZER_DUTY_ON) {
 		digitalWrite(PIN_BUZZER, HIGH);
@@ -167,6 +173,9 @@ void buzzer() {
 	}
 
 	counter = (counter + 1) % BUZZER_DUTY_TOT;
+	if (counter == 0) {
+		runs++;
+	}
 }
 
 void deployment_step()
