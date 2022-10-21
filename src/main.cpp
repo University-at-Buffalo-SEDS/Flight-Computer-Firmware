@@ -94,6 +94,17 @@ void channel_fire(Channel chan)
 	digitalWrite(channel_config[(size_t)chan].fire_pin, HIGH);
 }
 
+void led_startup()
+{
+	digitalWrite(LED_BUILTIN, HIGH);
+	delay(1);
+	digitalWrite(LED_BUILTIN, LOW);
+
+	digitalWrite(LED_BUILTIN, HIGH);
+	delay(3);
+	digitalWrite(LED_BUILTIN, LOW);
+}
+
 void channel_step()
 {
 	uint32_t now = millis();
