@@ -14,7 +14,7 @@ SPIClass FLASH_SPI(FLIGHT_FLASH_MOSI_PIN, FLIGHT_FLASH_MISO_PIN, FLIGHT_FLASH_SC
 #define FLASH_SPI SPI
 #endif
 
-#define W25Q16_DEVICE_ID 0x14
+#define W25Q32JV_DEVICE_ID 0x15
 
 // 18Mhz is max spopported by STM32 when SYSCLK is 72MHz.
 // Need to use FAST_READ instruction if above 50MHz
@@ -60,7 +60,8 @@ void flash_setup()
 	uint8_t device_id = FLASH_SPI.transfer(0);
 	spi_end();
 
-	if (device_id != W25Q16_DEVICE_ID) {
+	if (device_id != W25Q32JV_DEVICE_ID) {
+		Serial.println(device_id);
 		Serial.println(F("Failed to set up flash!"));
 		abort();
 	} else {

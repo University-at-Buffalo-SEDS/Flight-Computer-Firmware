@@ -79,13 +79,30 @@
 // Number of milliseconds of log data write out from before launch is detected.
 #define PRELOG_MS 2000
 
-#define PIN_ADXL345_CS PA8
-#define PIN_BMP280_CS PA9
-#define PIN_FLASH_CS PB11
-//#define PIN_LAUNCH
-#define PIN_BATT_V A0
-#define PIN_SYS_V A1
+#define PIN_BUZZER     5
+#define PIN_ADXL345_CS 10
+#define PIN_BMP280_CS  9
+#define PIN_FLASH_CS   8
+// #define PIN_LAUNCH
+// #define PIN_BATT_V A0
+// #define PIN_SYS_V A1
 
+// Buzzer timer
+// Number of times to beep once in idle state.
+#define MAX_BUZZER_CYCLES 5
+// Duty on is how many KALMAN_PERIODs for the buzzer to be on
+#define BUZZER_DUTY_ON  5
+// Duty off is how many KALMAN_PERIODs for the buzzer to be off
+#define BUZZER_DUTY_OFF 25
+// Total period of a duty cycle
+#define BUZZER_DUTY_TOT (BUZZER_DUTY_ON + BUZZER_DUTY_OFF)
+
+// RGB LED
+#define LEDS_NUM  3
+#define LED_RED   16
+#define LED_GREEN 17
+#define LED_BLUE  18
+  
 // How long to leave the fire channels active, in milliseconds
 #define CHANNEL_FIRE_TIME 1000
 
@@ -100,16 +117,16 @@ enum class Channel {
 };
 
 constexpr std::array<ChannelConfig, (size_t)Channel::Count> channel_config = {
-	ChannelConfig {PC0},
-	ChannelConfig {PC1}
+	ChannelConfig {6},
+	ChannelConfig {7}
 };
 
-#define FLIGHT_FLASH_MOSI_PIN PB15
-#define FLIGHT_FLASH_MISO_PIN PB14
-#define FLIGHT_FLASH_SCK_PIN PB13
+// #define FLIGHT_FLASH_MOSI_PIN PB15
+// #define FLIGHT_FLASH_MISO_PIN PB14
+// #define FLIGHT_FLASH_SCK_PIN PB13
 
-#define GPS_SERIAL Serial2
-#define XBEE_SERIAL Serial1
+#define GPS_SERIAL Serial3
+#define XBEE_SERIAL Serial5
 
 #define EEPROM_FLIGHT 0
 
@@ -119,3 +136,7 @@ constexpr std::array<ChannelConfig, (size_t)Channel::Count> channel_config = {
 #define STANDARD_GRAVITY 9.80665f
 
 #define DEBUG 0
+
+// Time to wait before testing pyrochannels
+#define TEST_FIRE_DELAY 2000
+#define TEST_FIRE_UPTIME 1000

@@ -158,13 +158,18 @@ static void log_print_msg(const LogMessage &msg)
 {
 	Serial.print(msg.time_ms);
 	Serial.print(',');
-	Serial.print(msg.state.pos);
+	// Position
+	Serial.print(msg.state(0));
 	Serial.print(',');
-	Serial.print(msg.state.rate);
+	// Velocity
+	Serial.print(msg.state(1));
 	Serial.print(',');
-	Serial.print(msg.state.accel);
+	// Acceleration
+	Serial.print(msg.state(2));
 	Serial.print(',');
 	Serial.print(msg.temp);
+	Serial.print(',');
+	Serial.print(msg.pressure);
 	Serial.print(',');
 	Serial.print(msg.altitude);
 	Serial.print(',');

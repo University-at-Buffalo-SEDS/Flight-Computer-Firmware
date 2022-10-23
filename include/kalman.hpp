@@ -50,7 +50,7 @@ public:
 	// Constant time step determined beforehand!
 	void step(kfloat_t accel, kfloat_t altitude);
 
-	const KalmanState &state() const { return est; }
+	KalmanState &state() { return est; }
 	kfloat_t pos() const { return est(0); }
 	kfloat_t rate() const { return est(1); }
 	kfloat_t accel() const { return est(2); }

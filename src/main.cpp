@@ -25,6 +25,8 @@ void print_step();
 void deployment_step();
 void channel_step();
 void channel_fire(Channel chan);
+void rgb_step();
+void rgb_color(int r, int g, int b);
 
 static std::array<ChannelStatus, channel_config.size()> channel_status;
 
@@ -50,11 +52,25 @@ void setup()
 	pinMode(LED_BUILTIN, OUTPUT);
 	digitalWrite(LED_BUILTIN, HIGH);
 
-	pinMode(PIN_BATT_V, INPUT_ANALOG);
-	pinMode(PIN_SYS_V, INPUT_ANALOG);
+	// Setup RGB leds
+	pinMode(LED_RED, OUTPUT);
+	digitalWrite(LED_RED, LOW);
+
+	pinMode(LED_GREEN, OUTPUT);
+	digitalWrite(LED_GREEN, LOW);
+
+	pinMode(LED_BLUE, OUTPUT);
+	digitalWrite(LED_BLUE, LOW);
+
+	// Setup Buzzer
+	pinMode(PIN_BUZZER, OUTPUT);
+	digitalWrite(PIN_BUZZER, LOW);
+
+	// pinMode(PIN_BATT_V, INPUT_ANALOG);
+	// pinMode(PIN_SYS_V, INPUT_ANALOG);
 	analogReadResolution(12);  // Enable full resolution
 
-	Serial.begin(2'250'000);
+	Serial.begin(9'600);
 
 	Serial.println(F("Flight Computer " __DATE__ " " __TIME__));
 
@@ -76,6 +92,8 @@ void setup()
 	scheduler_add(TaskId::Command, Task(command_step, 100'000L, 10));
 	scheduler_add(TaskId::Print, Task(print_step, 3'000'000L, 3000));
 	scheduler_add(TaskId::Blink, Task(blink_step, (KALMAN_PERIOD / 2) * 1000L, 20));
+	rgb_color(1, 0, 0);
+	
 }
 
 void loop()
@@ -114,7 +132,7 @@ void command_step()
 		log_print_all();
 		break;
 	default:
-		Serial.println("Unrecognized command.");
+		// Serial.println("Unrecognized command.");
 		break;
 	}
 }
@@ -133,6 +151,28 @@ void print_step()
 	baro_print();
 }
 
+// Currently disabled, add as a schedule.
+void buzzer() {
+	static int runs = 0;
+	static int counter = 0;
+
+	if (runs >= MAX_BUZZER_CYCLES) {
+		digitalWrite(PIN_BUZZER, LOW);
+		return;
+	}
+
+	if (counter < BUZZER_DUTY_ON) {
+		digitalWrite(PIN_BUZZER, HIGH);
+	} else {
+		digitalWrite(PIN_BUZZER, LOW);
+	}
+
+	counter = (counter + 1) % BUZZER_DUTY_TOT;
+	if (counter == 0) {
+		runs++;
+	}
+}
+
 void deployment_step()
 {
 	static uint32_t land_time = 0;
@@ -148,7 +188,7 @@ void deployment_step()
 	static bool send_now = true;
 	uint32_t step_time = millis();
 
-	if (isnan(raw_alt) || isnan(accel[0])) {
+	if (std::isnan(raw_alt) || std::isnan(accel[0])) {
 		// Wait until the next run, by which time we may have new data.
 		return;
 	}
@@ -165,6 +205,7 @@ void deployment_step()
 				!gravity_est_state.full()) {
 			return;
 		}
+		
 		phase = FlightPhase::Idle;
 	}
 
@@ -186,8 +227,10 @@ void deployment_step()
 	}
 
 	if (phase == FlightPhase::Idle) {
+
 		// Detect launch
 		if (kf.rate() > LAUNCH_VELOCITY && kf.accel() > LAUNCH_ACCEL) {
+			
 			phase = FlightPhase::Launched;
 #ifdef PIN_LAUNCH
 			digitalWrite(PIN_LAUNCH, HIGH);
@@ -196,12 +239,16 @@ void deployment_step()
 			log_start();
 #endif
 			send_now = true;
+
+			// Turn buzzer off if we in  the launch phase
+			digitalWrite(PIN_BUZZER, LOW);
 		}
 	} else if (phase == FlightPhase::Launched) {
 		// Detect apogee
 		if (kf.rate() < 0) {
 			apogee = kf.pos();
 			channel_fire(Channel::Drogue);
+			
 			phase = FlightPhase::DescendingWithDrogue;
 
 			Serial.println(F("===================================== Apogee!"));
@@ -220,6 +267,7 @@ void deployment_step()
 			|| kf.rate() < -(FAILSAFE_VELOCITY)
 #endif
 				) && delta(channel_status[(size_t)Channel::Drogue].fire_time, step_time) > 3000) {
+			
 			phase = FlightPhase::DescendingWithMain;
 			channel_fire(Channel::Main);
 
@@ -236,6 +284,7 @@ void deployment_step()
 					land_time = 1;
 				}
 			} else if (delta(land_time, step_time) > LANDED_TIME_MS) { // Must stay landed long enough
+				
 				phase = FlightPhase::Landed;
 				Serial.println(F("===================================== Landed!"));
 				send_now = true;
@@ -248,13 +297,15 @@ void deployment_step()
 		}
 	}
 
-	uint32_t batt_v = analogRead(PIN_BATT_V);
-	Serial.print("Raw batt V: ");
-	Serial.println(batt_v);
-	batt_v = map(batt_v, BATT_MIN_READING, BATT_MAX_READING, 0, BATT_MAX_VOLTAGE);
+	uint32_t batt_v = 0;
+	// uint32_t batt_v = analogRead(PIN_BATT_V);
+	// Serial.print("Raw batt V: ");
+	// Serial.println(batt_v);
+	// batt_v = map(batt_v, BATT_MIN_READING, BATT_MAX_READING, 0, BATT_MAX_VOLTAGE);
 
-	uint32_t sys_v = analogRead(PIN_SYS_V);
-	sys_v = map(sys_v, SYS_MIN_READING, SYS_MAX_READING, 0, SYS_MAX_VOLTAGE);
+	uint32_t sys_v = 0;
+	// uint32_t sys_v = analogRead(PIN_SYS_V);
+	// sys_v = map(sys_v, SYS_MIN_READING, SYS_MAX_READING, 0, SYS_MAX_VOLTAGE);
 
 #if LOG_ENABLE
 	log_add(LogMessage(
@@ -268,6 +319,7 @@ void deployment_step()
 		gps_get_lon(),
 		gps_get_alt(),
 		baro_get_temp(),
+		baro_get_pressure(),
 		(uint16_t)batt_v,
 		(uint16_t)sys_v
 	));
@@ -278,5 +330,6 @@ void deployment_step()
 				alt, accel_mag, gps_get_lat(), gps_get_lon(), apogee,
 				baro_get_temp(), batt_v));
 	}
+
 	send_now = !send_now;
 }
