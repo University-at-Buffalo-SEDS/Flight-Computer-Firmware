@@ -2,6 +2,23 @@
 
 This is the current latest version of the flight computer, currently only build for the Teensy microcontrollers.
 
+
+# TODO
+
+[ ] BMP390 Drivers
+    - Arduino Lib/Examples (https://github.com/adafruit/Adafruit_BMP3XX)[https://github.com/adafruit/Adafruit_BMP3XX]
+[ ] BMI088 Drivers
+    - Arduino Lib/Examples (https://github.com/bolderflight/bmi088-arduino)[https://github.com/bolderflight/bmi088-arduino]
+[ ] Change Format of logging data
+[ ] NEOM9N Drivers
+[ ] Buzzer beep boop codes
+Radio:
+[ ] DRA818U
+    - [ ] Drivers
+    - [ ] APRS packets
+[ ] RFD900x Drivers
+
+
 ## Contributions
 
 To make contributions please fork the repo so that you have your own copy to modify.
