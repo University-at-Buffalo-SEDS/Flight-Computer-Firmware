@@ -6,16 +6,16 @@ This is the current latest version of the flight computer, currently only build 
 # TODO
 
 [ ] BMP390 Drivers
-    - Arduino Lib/Examples (https://github.com/adafruit/Adafruit_BMP3XX)[https://github.com/adafruit/Adafruit_BMP3XX]
+- [Arduino Lib/Examples](https://github.com/adafruit/Adafruit_BMP3XX)
 [ ] BMI088 Drivers
-    - Arduino Lib/Examples (https://github.com/bolderflight/bmi088-arduino)[https://github.com/bolderflight/bmi088-arduino]
+- [Arduino Lib/Examples](https://github.com/bolderflight/bmi088-arduino)
 [ ] Change Format of logging data
 [ ] NEOM9N Drivers
 [ ] Buzzer beep boop codes
 Radio:
 [ ] DRA818U
-    - [ ] Drivers
-    - [ ] APRS packets
+- [ ] Drivers
+- [ ] APRS packets
 [ ] RFD900x Drivers
 
 
