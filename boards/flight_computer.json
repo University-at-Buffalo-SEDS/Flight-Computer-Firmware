@@ -1,40 +1,50 @@
 {
-	"name": "Flight Computer",
-	"vendor": "UB SEDS",
-	"url": "https://www.st.com/en/microcontrollers/stm32f303re.html",
-	"build": {
-		"cpu": "cortex-m4",
-		"extra_flags": "-DSTM32F3 -DSTM32F303xE -DARDUINO_GENERIC_F303RETX -DLED_BUILTIN=PC4 -DSERIAL_UART_INSTANCE=3 -DPIN_SERIAL_RX=PC11 -DPIN_SERIAL_TX=PC10 -DENABLE_HWSERIAL1 -DPIN_SERIAL1_RX=PB7 -DPIN_SERIAL1_TX=PB6 -DENABLE_HWSERIAL2 -DPIN_SERIAL2_RX=PB4 -DPIN_SERIAL2_TX=PB3",
-		"f_cpu": "72000000L",
-		"mcu": "stm32f303ret6",
-		"variant": "F303R(D-E)T",
-		"variants_dir": "variants",
+  "build": {
+    "core": "stm32",
+    "cpu": "cortex-m4",
+    "extra_flags": "-DSTM32G4xx -DSTM32G431xx -DARDUINO_GENERIC_G431C8TX",
+    "f_cpu": "150000000L",
+    "mcu": "stm32g431c8t6",
+    "product_line": "STM32G431xx",
+    "variant": "G431C(6-8-B)T_G441CBT",
+    "variants_dir": "variants",
 		"arduino": {
 			"variant_h": "variant_generic.h"
 		}
-	},
-	"debug": {
-		"default_tools": [
-			"blackmagic"
-		],
-		"jlink_device": "STM32F303RE",
-		"openocd_target": "stm32f3x",
-		"svd_path": "STM32F303xE.svd"
-	},
-	"frameworks": [
-		"arduino",
-		"libopencm3",
-		"mbed",
-		"stm32cube"
-	],
-	"upload": {
-		"maximum_ram_size": 65536,
-		"maximum_size": 524288,
-		"protocol": "blackmagic",
-		"protocols": [
-			"jlink",
-			"stlink",
-			"blackmagic"
-		]
-	}
+  },
+  "connectivity": [
+    "can"
+  ],
+  "debug": {
+    "default_tools": [
+      "stlink"
+    ],
+    "jlink_device": "STM32G431C8",
+    "onboard_tools": [
+      "stlink"
+    ],
+    "openocd_target": "stm32g4x",
+    "svd_path": "STM32G431xx.svd"
+  },
+  "frameworks": [
+    "arduino",
+    "cmsis",
+    "libopencm3",
+    "stm32cube"
+  ],
+  "name": "Flight Computer",
+  "upload": {
+    "maximum_ram_size": 32768,
+    "maximum_size": 65536,
+    "protocol": "stlink",
+    "protocols": [
+      "stlink",
+      "jlink",
+      "cmsis-dap",
+      "blackmagic",
+      "mbed"
+    ]
+  },
+  "url": "https://www.st.com/en/microcontrollers-microprocessors/stm32g431c8.html",
+  "vendor": "UB SEDS"
 }
