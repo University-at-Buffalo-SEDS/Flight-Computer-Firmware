@@ -25,8 +25,6 @@ void print_step();
 void deployment_step();
 void channel_step();
 void channel_fire(Channel chan);
-void rgb_step();
-void rgb_color(int r, int g, int b);
 
 static std::array<ChannelStatus, channel_config.size()> channel_status;
 
@@ -51,16 +49,6 @@ void setup()
 
 	pinMode(LED_BUILTIN, OUTPUT);
 	digitalWrite(LED_BUILTIN, HIGH);
-
-	// Setup RGB leds
-	pinMode(LED_RED, OUTPUT);
-	digitalWrite(LED_RED, LOW);
-
-	pinMode(LED_GREEN, OUTPUT);
-	digitalWrite(LED_GREEN, LOW);
-
-	pinMode(LED_BLUE, OUTPUT);
-	digitalWrite(LED_BLUE, LOW);
 
 	// Setup Buzzer
 	pinMode(PIN_BUZZER, OUTPUT);
@@ -92,7 +80,6 @@ void setup()
 	scheduler_add(TaskId::Command, Task(command_step, 100'000L, 10));
 	scheduler_add(TaskId::Print, Task(print_step, 3'000'000L, 3000));
 	scheduler_add(TaskId::Blink, Task(blink_step, (KALMAN_PERIOD / 2) * 1000L, 20));
-	rgb_color(1, 0, 0);
 	
 }
 
