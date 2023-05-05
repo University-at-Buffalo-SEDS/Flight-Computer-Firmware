@@ -15,7 +15,7 @@
 #define LOG_MAX_FLIGHT_MESSAGES (FLIGHT_FLASH_FLIGHT_SIZE / sizeof(LogMessage))
 #define LOG_MAX_FLIGHT_TIME (LOG_MAX_FLIGHT_MESSAGES / (1000 / KALMAN_PERIOD))
 
-static_assert(LOG_MAX_FLIGHT_TIME > 5 * 60, "Insufficient space available for flight logs");
+static_assert(LOG_MAX_FLIGHT_TIME > 3 * 60, "Insufficient space available for drop logs");
 
 static void log_step();
 static void log_print_flight(size_t flight);

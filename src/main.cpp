@@ -16,11 +16,6 @@
 USBSerial usb_serial;
 #endif
 
-struct ChannelStatus {
-	uint32_t fire_time;
-	bool firing;
-};
-
 // Prototypes
 void command_step();
 void blink_step();
@@ -34,17 +29,16 @@ static KalmanFilter kf(KALMAN_PERIOD / 1000.0f,
 		ALTITUDE_SIGMA, ACCELERATION_SIGMA, MODEL_SIGMA);
 #endif
 
+// Global variable
+bool enable_led = false;
+
 void setup()
 {
 	pinMode(LED_BUILTIN, OUTPUT);
 	digitalWrite(LED_BUILTIN, HIGH);
 
-	// pinMode(PIN_BATT_V, INPUT_ANALOG);
-	// pinMode(PIN_SYS_V, INPUT_ANALOG);
-	analogReadResolution(12);  // Enable full resolution
-
 #if defined (USBCON) && defined(USBD_USE_CDC)
-	usb_serial.begin();
+	usb_serial.begin(115'200);
 #else
 	Serial.begin(9'600);
 #endif
@@ -64,8 +58,7 @@ void setup()
 	scheduler_add(TaskId::Deployment, Task(deployment_step, KALMAN_PERIOD * 1000L, 2500));
 	scheduler_add(TaskId::Command, Task(command_step, 100'000L, 10));
 	scheduler_add(TaskId::Print, Task(print_step, 3'000'000L, 3000));
-	scheduler_add(TaskId::Blink, Task(blink_step, (KALMAN_PERIOD / 2) * 1000L, 20));
-	
+	scheduler_add(TaskId::Blink, Task(blink_step, (KALMAN_PERIOD) * 1000L, 20));
 }
 
 void loop()
@@ -83,16 +76,18 @@ void command_step()
 		log_print_all();
 		break;
 	default:
-		// Serial.println("Unrecognized command.");
+		Serial.println("Unrecognized command.");
 		break;
 	}
 }
 
 void blink_step()
 {
-	static bool on = false;
-	digitalWrite(LED_BUILTIN, on ? HIGH : LOW);
-	on = !on;
+	if (enable_led) {
+		static bool on = false;
+		digitalWrite(LED_BUILTIN, on ? HIGH : LOW);
+		on = !on;
+	}
 }
 
 void print_step()
@@ -107,7 +102,6 @@ void deployment_step() {
 	static FlightPhase phase = FlightPhase::Startup;
 	static AvgHistory<float, EST_HISTORY_SAMPLES, 3> gravity_est_state;
 	static AvgHistory<float, EST_HISTORY_SAMPLES, 3> ground_level_est_state;
-	static kfloat_t apogee = 0;
 	float *accel = accel_get();
 	float raw_alt = baro_get_altitude();
 
@@ -137,6 +131,8 @@ void deployment_step() {
 
 		buffer_time_ms += step_time;
 
+		enable_led = true;
+
 #if LOG_ENABLE
 		log_start();
 #endif
@@ -165,6 +161,10 @@ void deployment_step() {
 			} else if (delta(land_time, step_time) > LANDED_TIME_MS) { // Must stay landed long enough
 				
 				phase = FlightPhase::Landed;
+
+				enable_led = false;
+				digitalWrite(LED_BUILTIN, false);
+
 #if LOG_ENABLE
 				log_stop();
 #endif

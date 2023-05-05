@@ -8,12 +8,8 @@ enum class TaskId : uint8_t {
 	// The order of these entries represents a sort of priority system,
 	// in that the first elements will always be checked first.
 	Deployment,  // This should be first because the Kalman filter is fairly sensitive to delays.
-	ChannelTimeout,
 	Accel,
-	GpsRead,
-	Gps,
 	Baro,
-	PacketSync,
 	LogFlush,
 	Command,
 	Print,

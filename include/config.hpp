@@ -20,7 +20,7 @@
 // In order to avoid issues with spurious readings, these values must
 // be maintained for at least LANDED_TIME_MS before landing is detected.
 // Descent velocity with main should be about 6 m/s
-#define LANDED_ALT 30
+#define LANDED_ALT -10
 #define LANDED_VELOCITY 2
 #define LANDED_ACCEL 1
 #define LANDED_TIME_MS 5000
@@ -47,11 +47,11 @@
 // Number of milliseconds of log data write out from before launch is detected.
 #define PRELOG_MS 2000
 
-// Pin definitions
-#define LED_BUILTIN				PB5
-#define PIN_BMI088_Accel_CS 	PB12
+// Pin definitions 
+#define PIN_BMI088_Accel_CS 	PB11
+#define PIN_BMI088_Gyro_CS		PB12
 #define PIN_BMP390_CS			PB13
-#define PIN_FLASH_CS   			PB14
+#define PIN_FLASH_CS   			PB8
   
 // How long to leave the fire channels active, in milliseconds
 #define CHANNEL_FIRE_TIME 1000
