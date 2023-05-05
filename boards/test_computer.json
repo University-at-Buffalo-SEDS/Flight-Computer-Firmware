@@ -2,11 +2,11 @@
   "build": {
     "core": "stm32",
     "cpu": "cortex-m4",
-    "extra_flags": "-DSTM32G4xx -DSTM32G491xx -DARDUINO_GENERIC_G491CETX -DENABLE_HWSERIAL1 -DPIN_SERIAL1_RX=PA10 -DPIN_SERIAL1_TX=PA9 -DENABLE_HWSERIAL2 -DPIN_SERIAL2_RX=PA3 -DPIN_SERIAL2_TX=PA2 -DENABLE_HWSERIAL3 -DPIN_SERIAL3_RX=PB11 -DPIN_SERIAL3_TX=PB10",
+    "extra_flags": "-DSTM32G4xx -DSTM32G431xx -DARDUINO_GENERIC_G431C8TX -DENABLE_HWSERIAL1 -DPIN_SERIAL1_RX=PA10 -DPIN_SERIAL1_TX=PA9 -DENABLE_HWSERIAL2 -DPIN_SERIAL2_RX=PA3 -DPIN_SERIAL2_TX=PA2 -DENABLE_HWSERIAL3 -DPIN_SERIAL3_RX=PB11 -DPIN_SERIAL3_TX=PB10",
     "f_cpu": "150000000L",
-    "mcu": "stm32g491cet6",
-    "product_line": "STM32G491xx",
-    "variant": "G491C(C-E)T_G4A1CET",
+    "mcu": "stm32g431c8t6",
+    "product_line": "STM32G431xx",
+    "variant": "G431C(6-8-B)T_G441CBT",
     "variants_dir": "variants",
 		"arduino": {
 			"variant_h": "variant_generic.h"
@@ -19,12 +19,12 @@
     "default_tools": [
       "stlink"
     ],
-    "jlink_device": "STM32G491CE",
+    "jlink_device": "STM32G431C8",
     "onboard_tools": [
       "stlink"
     ],
     "openocd_target": "stm32g4x",
-    "svd_path": "STM32G491xx.svd"
+    "svd_path": "STM32G431xx.svd"
   },
   "frameworks": [
     "arduino",
@@ -34,8 +34,8 @@
   ],
   "name": "Flight Computer",
   "upload": {
-    "maximum_ram_size": 131072,
-    "maximum_size": 524288,
+    "maximum_ram_size": 32768,
+    "maximum_size": 65536,
     "protocol": "stlink", 
     "protocols": [
       "stlink",
@@ -45,6 +45,6 @@
       "mbed"
     ]
   },
-  "url": "https://www.st.com/en/microcontrollers-microprocessors/stm32g491ce.html",
+  "url": "https://www.st.com/en/microcontrollers-microprocessors/stm32g431c8.html",
   "vendor": "UB SEDS"
 }

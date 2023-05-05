@@ -13,6 +13,11 @@
 
 #include <cmath>
 
+#if defined (USBCON) && defined(USBD_USE_CDC)
+#include "USBSerial.h"
+USBSerial usb_serial;
+#endif
+
 struct ChannelStatus {
 	uint32_t fire_time;
 	bool firing;
@@ -58,7 +63,11 @@ void setup()
 	// pinMode(PIN_SYS_V, INPUT_ANALOG);
 	analogReadResolution(12);  // Enable full resolution
 
+#if defined (USBCON) && defined(USBD_USE_CDC)
+	usb_serial.begin();
+#else
 	Serial.begin(9'600);
+#endif
 
 	Serial.println(F("Flight Computer " __DATE__ " " __TIME__));
 
