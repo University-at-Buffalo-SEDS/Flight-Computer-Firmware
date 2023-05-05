@@ -1,10 +1,8 @@
 #include "accel.hpp"
 #include "baro.hpp"
 #include "config.hpp"
-#include "gps.hpp"
 #include "kalman.hpp"
 #include "log.hpp"
-#include "radio.hpp"
 #include "scheduler.hpp"
 #include "util.hpp"
 
@@ -75,13 +73,11 @@ void setup()
 
 	SPI.begin();
 
-	gps_setup();
 	baro_setup();
 	accel_setup();
 #if LOG_ENABLE
 	log_setup();
 #endif
-	radio_setup();
 
 	scheduler_add(TaskId::Deployment, Task(deployment_step, KALMAN_PERIOD * 1000L, 2500));
 	scheduler_add(TaskId::ChannelTimeout, Task(channel_step,
@@ -142,7 +138,6 @@ void blink_step()
 
 void print_step()
 {
-	gps_print();
 	accel_print();
 	baro_print();
 }
@@ -311,21 +306,10 @@ void deployment_step()
 		accel[0],
 		accel[1],
 		accel[2],
-		gps_get_lat(),
-		gps_get_lon(),
-		gps_get_alt(),
 		baro_get_temp(),
 		baro_get_pressure(),
 		(uint16_t)batt_v,
 		(uint16_t)sys_v
 	));
 #endif
-
-	if (send_now) {
-		radio_send(Packet(phase, step_time, kf.pos(), kf.rate(), kf.accel(),
-				alt, accel_mag, gps_get_lat(), gps_get_lon(), apogee,
-				baro_get_temp(), batt_v));
-	}
-
-	send_now = !send_now;
 }
