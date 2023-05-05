@@ -11,12 +11,9 @@
 
 #define LOG_ENABLE 1
 
-// Rates which trigger a launch event (deployment will only occur
-// when apogee is detected after a launch event).  Velocity and
-// acceleration must be greater than both of these for a launch
-// event to be detected.
-#define LAUNCH_VELOCITY 8
-#define LAUNCH_ACCEL 20
+// Time that passes between calls to kalman_step (in ms).
+// Note: may have to reconfigure sensors to supply data faster if this is changed.
+#define KALMAN_PERIOD 100
 
 // Altitude and velocity and acceleration below which landing will
 // be detected.  Acceleration is comphensated for gravity.
@@ -27,17 +24,6 @@
 #define LANDED_VELOCITY 2
 #define LANDED_ACCEL 1
 #define LANDED_TIME_MS 5000
-
-// If the downward velocity goes above this value after drogue
-// deployment then the main will deploy.  This is a failsafe
-// in case the drogue fails to deploy.
-// Initial estimates are that drogue descent will be at about 38 m/s.
-// XXX: This value should be checked before use.
-//#define FAILSAFE_VELOCITY 60
-
-// Time that passes between calls to kalman_step (in ms).
-// Note: may have to reconfigure sensors to supply data faster if this is changed.
-#define KALMAN_PERIOD 100
 
 // Noise values for Kalman filter.  These should be rounded up a bit.
 // Standard deviation of altimeter noise in m
@@ -52,6 +38,16 @@
 // Precomputed Kalman gains.  Reduces startup time, but must be recomputed for every change of the parameters.
 //#define KALMAN_GAINS 0, 0, 0, 0, 0, 0
 
+// We need to have enough samples that a launch event will be detected
+// before this overflows.  The default value coresponds to one second
+// worth of samples.  With the double delay this means that the estimate
+// will have a 1-2 second delay.
+#define EST_HISTORY_SAMPLES (1000/KALMAN_PERIOD)
+
+// Number of milliseconds of log data write out from before launch is detected.
+#define PRELOG_MS 2000
+
+// Pin definitions
 #define LED_BUILTIN				PB5
 #define PIN_BMI088_Accel_CS 	PB12
 #define PIN_BMP390_CS			PB13
@@ -60,37 +56,9 @@
 // How long to leave the fire channels active, in milliseconds
 #define CHANNEL_FIRE_TIME 1000
 
-struct ChannelConfig {
-	int fire_pin;
-};
-
-enum class Channel {
-	Drogue,
-	Main,
-	Count
-};
-
-constexpr std::array<ChannelConfig, (size_t)Channel::Count> channel_config = {
-	ChannelConfig {0},
-	ChannelConfig {0}
-};
-
-// #define FLIGHT_FLASH_MOSI_PIN PB15
-// #define FLIGHT_FLASH_MISO_PIN PB14
-// #define FLIGHT_FLASH_SCK_PIN PB13
-
-#define GPS_SERIAL Serial1
-#define XBEE_SERIAL Serial3
-
 #define EEPROM_FLIGHT 0
-
-#define GPS_UPDATE_RATE 5
 
 // Standard gravity in m/s^2
 #define STANDARD_GRAVITY 9.80665f
 
 #define DEBUG 0
-
-// Time to wait before testing pyrochannels
-#define TEST_FIRE_DELAY 2000
-#define TEST_FIRE_UPTIME 1000
