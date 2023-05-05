@@ -42,7 +42,8 @@
 // Noise values for Kalman filter.  These should be rounded up a bit.
 // Standard deviation of altimeter noise in m
 //#define ALTITUDE_SIGMA 1.5f  // For MPL3115A2
-#define ALTITUDE_SIGMA 1.0f  // For BMP280.  Note: actual value is about 0.16
+//#define ALTITUDE_SIGMA 1.0f  // For BMP280.  Note: actual value is about 0.16
+#define ALTITUDE_SIGMA 1.0f  // For BMP390   actual value is about 0.9 without IIR filtering
 // Standard deviation of accelerometer noise in m/s^2
 #define ACCELERATION_SIGMA 1.0f  // For LSM9DS0 and ADXL345  Note: actual value is about 0.05.
 // Standard deviation of model noise in m/s^2
@@ -51,57 +52,10 @@
 // Precomputed Kalman gains.  Reduces startup time, but must be recomputed for every change of the parameters.
 //#define KALMAN_GAINS 0, 0, 0, 0, 0, 0
 
-// We need to have enough samples that a launch event will be detected
-// before this overflows.  The default value coresponds to one second
-// worth of samples.  With the double delay this means that the estimate
-// will have a 1-2 second delay.
-#define EST_HISTORY_SAMPLES (1000/KALMAN_PERIOD)
-
-// Altitude at which the main parachute should be deployed, in meters.
-#define MAIN_DEPLOY_ALTITUDE 381.0f  // 1250ft
-
-// Battery voltage level reading configuration.
-// TODO: Better numbers for these.
-// The value that the analog input reports when the battery is at 0V.
-#define BATT_MIN_READING 0
-// The value that the analog input reports when the battery is full.
-#define BATT_MAX_READING 41350
-// The voltage that the battery is actually at when full (in millivolts).
-#define BATT_MAX_VOLTAGE 8320
-
-// The value that the analog input reports when the system is at 0V.
-#define SYS_MIN_READING 0
-// The value that the analog input reports when the system is at max voltage.
-#define SYS_MAX_READING 4096
-// The max system voltage (in millivolts).
-#define SYS_MAX_VOLTAGE 3300
-
-// Number of milliseconds of log data write out from before launch is detected.
-#define PRELOG_MS 2000
-
-#define PIN_BUZZER     5
-#define PIN_ADXL345_CS 10
-#define PIN_BMP280_CS  9
-#define PIN_FLASH_CS   8
-// #define PIN_LAUNCH
-// #define PIN_BATT_V A0
-// #define PIN_SYS_V A1
-
-// Buzzer timer
-// Number of times to beep once in idle state.
-#define MAX_BUZZER_CYCLES 5
-// Duty on is how many KALMAN_PERIODs for the buzzer to be on
-#define BUZZER_DUTY_ON  5
-// Duty off is how many KALMAN_PERIODs for the buzzer to be off
-#define BUZZER_DUTY_OFF 25
-// Total period of a duty cycle
-#define BUZZER_DUTY_TOT (BUZZER_DUTY_ON + BUZZER_DUTY_OFF)
-
-// RGB LED
-#define LEDS_NUM  3
-#define LED_RED   16
-#define LED_GREEN 17
-#define LED_BLUE  18
+#define LED_BUILTIN				PB5
+#define PIN_BMI088_Accel_CS 	PB12
+#define PIN_BMP390_CS			PB13
+#define PIN_FLASH_CS   			PB14
   
 // How long to leave the fire channels active, in milliseconds
 #define CHANNEL_FIRE_TIME 1000
