@@ -4,6 +4,9 @@
 
 #include "config.hpp"
 
+// Time to wait before testing pyrochannels
+#define TEST_FIRE_DELAY 2000
+#define TEST_FIRE_UPTIME 1000
 
 void test_pyrochannels() {
 

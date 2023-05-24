@@ -14,6 +14,7 @@ enum class TaskId : uint8_t {
 	Gps,
 	Baro,
 	PacketSync,
+	Gyro,
 	LogFlush,
 	Command,
 	Print,

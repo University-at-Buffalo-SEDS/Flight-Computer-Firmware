@@ -80,28 +80,12 @@
 #define PRELOG_MS 2000
 
 #define PIN_BUZZER		5
+#define PIN_GYRO_CS		PB2
 #define PIN_ACCEL_CS	PB12
 #define PIN_BARO_CS		PB0
 #define PIN_FLASH_CS	8
-// #define PIN_LAUNCH
 // #define PIN_BATT_V A0
 // #define PIN_SYS_V A1
-
-// Buzzer timer
-// Number of times to beep once in idle state.
-#define MAX_BUZZER_CYCLES 5
-// Duty on is how many KALMAN_PERIODs for the buzzer to be on
-#define BUZZER_DUTY_ON  5
-// Duty off is how many KALMAN_PERIODs for the buzzer to be off
-#define BUZZER_DUTY_OFF 25
-// Total period of a duty cycle
-#define BUZZER_DUTY_TOT (BUZZER_DUTY_ON + BUZZER_DUTY_OFF)
-
-// RGB LED
-#define LEDS_NUM  3
-#define LED_RED   16
-#define LED_GREEN 17
-#define LED_BLUE  18
   
 // How long to leave the fire channels active, in milliseconds
 #define CHANNEL_FIRE_TIME 1000
@@ -136,7 +120,3 @@ constexpr std::array<ChannelConfig, (size_t)Channel::Count> channel_config = {
 #define STANDARD_GRAVITY 9.80665f
 
 #define DEBUG 0
-
-// Time to wait before testing pyrochannels
-#define TEST_FIRE_DELAY 2000
-#define TEST_FIRE_UPTIME 1000

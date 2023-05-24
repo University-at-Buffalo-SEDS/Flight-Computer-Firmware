@@ -1,5 +1,6 @@
 #include "accel.hpp"
 #include "baro.hpp"
+#include "gyro.hpp"
 #include "config.hpp"
 #include "gps.hpp"
 #include "kalman.hpp"
@@ -78,6 +79,7 @@ void setup()
 	gps_setup();
 	baro_setup();
 	accel_setup();
+	gyro_setup();
 #if LOG_ENABLE
 	log_setup();
 #endif
@@ -145,28 +147,6 @@ void print_step()
 	gps_print();
 	accel_print();
 	baro_print();
-}
-
-// Currently disabled, add as a schedule.
-void buzzer() {
-	static int runs = 0;
-	static int counter = 0;
-
-	if (runs >= MAX_BUZZER_CYCLES) {
-		digitalWrite(PIN_BUZZER, LOW);
-		return;
-	}
-
-	if (counter < BUZZER_DUTY_ON) {
-		digitalWrite(PIN_BUZZER, HIGH);
-	} else {
-		digitalWrite(PIN_BUZZER, LOW);
-	}
-
-	counter = (counter + 1) % BUZZER_DUTY_TOT;
-	if (counter == 0) {
-		runs++;
-	}
 }
 
 void deployment_step()
