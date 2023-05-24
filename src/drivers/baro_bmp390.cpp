@@ -29,7 +29,7 @@ Adafruit_BMP3XX bmp;
 // Global functions
 void baro_setup() {
 
-	if (!bmp.begin_SPI(PIN_BMP390_CS)) {
+	if (!bmp.begin_SPI(PIN_BARO_CS)) {
 		Serial.println("Could not find a vaild BMP3 sensor, check wiring!");
 		abort();
 	}

@@ -79,10 +79,10 @@
 // Number of milliseconds of log data write out from before launch is detected.
 #define PRELOG_MS 2000
 
-#define PIN_BUZZER     5
-#define PIN_ADXL345_CS 10
-#define PIN_BMP280_CS  9
-#define PIN_FLASH_CS   8
+#define PIN_BUZZER		5
+#define PIN_ACCEL_CS	PB12
+#define PIN_BARO_CS		PB0
+#define PIN_FLASH_CS	8
 // #define PIN_LAUNCH
 // #define PIN_BATT_V A0
 // #define PIN_SYS_V A1

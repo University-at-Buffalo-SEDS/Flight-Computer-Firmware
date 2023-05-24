@@ -5,29 +5,27 @@ This is the current latest version of the flight computer, currently only build 
 
 # TODO
 
-[ ] BMP390 Drivers
+- [X] BMP390 Drivers
 - [Arduino Lib/Examples](https://github.com/adafruit/Adafruit_BMP3XX)
 
-[ ] BMI088 Drivers
+- [X] BMI088 Drivers
 - [Arduino Lib/Examples](https://github.com/bolderflight/bmi088-arduino)
 
-[ ] Change Format of logging data
-[ ] NEOM9N Drivers
-[ ] Buzzer beep boop codes
-Radio:
-[ ] DRA818U
+- [ ] NEOM9N Drivers
+
+APRS Radio:
+- [ ] DRA818U
 - [ ] Drivers
-- [ ] APRS packets
+- [ ] 1200 AFSK packets
 
-[ ] RFD900x Drivers
+Serial Radio:
+- [ ] RFD900x Drivers (works just like a serial interface)
 
+Misc:
+- [ ] Change Format of logging data and radio packets
+- [ ] Buzzer beep boop codes
 
-## Contributions
+Extra:
+- [ ] [Ground station revamp](https://github.com/University-at-Buffalo-SEDS/Flight-Computer-Ground-Station)
+- [ ] USB Virtual mass storage for grabbing csv formatted data.
 
-To make contributions please fork the repo so that you have your own copy to modify.
-
-Then make a branch with the name of the changes/additions that you have.
-
-Work in the branch making commits to checkpoint your work and once finished and satified you can make a pull request.
-
-We can then review it and make sure it works (or at least compiles).

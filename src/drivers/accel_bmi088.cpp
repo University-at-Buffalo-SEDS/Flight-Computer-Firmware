@@ -15,7 +15,7 @@ void accel_print();
 
 // File-Global variables
 static float last_accel[3] = {NAN, NAN, NAN};
-Bmi088Accel accel(SPI, PIN_BMI088_Accel_CS);
+Bmi088Accel accel(SPI, PIN_ACCEL_CS);
 
 // Global functions
 void accel_setup() {
