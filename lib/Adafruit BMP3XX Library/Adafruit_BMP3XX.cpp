@@ -294,18 +294,7 @@ float Adafruit_BMP3XX::readAltitude(float seaLevel) {
   return 44330.0 * (1.0 - pow(atmospheric / seaLevel, 0.1903));
 }
 
-/**************************************************************************/
-/*!
-    @brief Performs a full reading of all sensors in the BMP3XX.
-
-    Assigns the internal Adafruit_BMP3XX#temperature & Adafruit_BMP3XX#pressure
-   member variables
-
-    @return True on success, False on failure
-*/
-/**************************************************************************/
-bool Adafruit_BMP3XX::performReading(void) {
-  g_i2c_dev = i2c_dev;
+bool Adafruit_BMP3XX::setSensorSettings(void) {
   g_spi_dev = spi_dev;
   int8_t rslt;
   /* Used to select the settings user needs to change */
@@ -336,23 +325,37 @@ bool Adafruit_BMP3XX::performReading(void) {
     settings_sel |= BMP3_SEL_ODR;
   }
 
-  // set interrupt to data ready
-  // settings_sel |= BMP3_DRDY_EN_SEL | BMP3_LEVEL_SEL | BMP3_LATCH_SEL;
-
   /* Set the desired sensor configuration */
-#ifdef BMP3XX_DEBUG
-  Serial.println("Setting sensor settings");
-#endif
   rslt = bmp3_set_sensor_settings(settings_sel, &the_sensor);
 
   if (rslt != BMP3_OK)
     return false;
 
+  return true;
+}
+
+/**************************************************************************/
+/*!
+    @brief Performs a full reading of all sensors in the BMP3XX.
+
+    Assigns the internal Adafruit_BMP3XX#temperature & Adafruit_BMP3XX#pressure
+   member variables
+
+    @return True on success, False on failure
+*/
+/**************************************************************************/
+bool Adafruit_BMP3XX::performReading(void) {
+  g_spi_dev = spi_dev;
+  int8_t rslt;
+  /* Variable used to select the sensor component */
+  uint8_t sensor_comp = 0;
+
+  /* Select the pressure and temperature sensor to be enabled */
+  sensor_comp |= BMP3_TEMP;
+  sensor_comp |= BMP3_PRESS;
+
   /* Set the power mode */
   the_sensor.settings.op_mode = BMP3_MODE_FORCED;
-#ifdef BMP3XX_DEBUG
-  Serial.println(F("Setting power mode"));
-#endif
   rslt = bmp3_set_op_mode(&the_sensor);
   if (rslt != BMP3_OK)
     return false;
@@ -362,9 +365,7 @@ bool Adafruit_BMP3XX::performReading(void) {
 
   /* Temperature and Pressure data are read and stored in the bmp3_data instance
    */
-#ifdef BMP3XX_DEBUG
-  Serial.println(F("Getting sensor data"));
-#endif
+
   rslt = bmp3_get_sensor_data(sensor_comp, &data, &the_sensor);
   if (rslt != BMP3_OK)
     return false;

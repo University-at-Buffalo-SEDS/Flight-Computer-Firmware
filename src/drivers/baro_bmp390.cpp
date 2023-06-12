@@ -39,7 +39,9 @@ void baro_setup() {
 	bmp.setIIRFilterCoeff(BMP3_IIR_FILTER_DISABLE);
 	bmp.setOutputDataRate(BMP3_ODR_25_HZ);
 
-	scheduler_add(TaskId::Baro, Task(baro_step, KALMAN_PERIOD * 1000L, 160));
+	bmp.setSensorSettings();
+
+	scheduler_add(TaskId::Baro, Task(baro_step, KALMAN_PERIOD * 1000L, 250));
 }
 
 void baro_step() {

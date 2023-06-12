@@ -56,6 +56,21 @@ void setup()
 	pinMode(LED_BUILTIN, OUTPUT);
 	digitalWrite(LED_BUILTIN, HIGH);
 
+	pinMode(PIN_ACCEL_CS, OUTPUT);
+	digitalWrite(PIN_ACCEL_CS, HIGH);
+
+	pinMode(PIN_BARO_CS, OUTPUT);
+	digitalWrite(PIN_BARO_CS, HIGH);
+
+	pinMode(PIN_GYRO_CS, OUTPUT);
+	digitalWrite(PIN_GYRO_CS, HIGH);
+
+	pinMode(PIN_FLASH_CS, OUTPUT);
+	digitalWrite(PIN_FLASH_CS, HIGH);
+
+	pinMode(PIN_NEOGPS_CS, OUTPUT);
+	digitalWrite(PIN_NEOGPS_CS, HIGH);
+
 	// Setup Buzzer
 	pinMode(PIN_BUZZER, OUTPUT);
 	digitalWrite(PIN_BUZZER, LOW);

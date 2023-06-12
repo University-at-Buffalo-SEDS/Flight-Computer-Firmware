@@ -79,12 +79,16 @@
 // Number of milliseconds of log data write out from before launch is detected.
 #define PRELOG_MS 2000
 
-#define PIN_BUZZER		5
-#define PIN_GYRO_CS		PB2
-#define PIN_ACCEL_CS	PB12
+#define PIN_BUZZER		PC13
+
 #define PIN_BARO_CS		PB0
-#define PIN_FLASH_CS	8
-// #define PIN_BATT_V A0
+#define PIN_ACCEL_CS	PB12
+#define PIN_GYRO_CS		PB2
+#define PIN_FLASH_CS	PB9
+
+#define PIN_NEOGPS_CS	PB1
+
+#define PIN_BATT_V		PA0
 // #define PIN_SYS_V A1
   
 // How long to leave the fire channels active, in milliseconds
@@ -105,9 +109,9 @@ constexpr std::array<ChannelConfig, (size_t)Channel::Count> channel_config = {
 	ChannelConfig {0}
 };
 
-// #define FLIGHT_FLASH_MOSI_PIN PB15
-// #define FLIGHT_FLASH_MISO_PIN PB14
-// #define FLIGHT_FLASH_SCK_PIN PB13
+#define FLIGHT_FLASH_MOSI_PIN PB15
+#define FLIGHT_FLASH_MISO_PIN PB14
+#define FLIGHT_FLASH_SCK_PIN PB13
 
 #define GPS_SERIAL Serial1
 #define XBEE_SERIAL Serial3

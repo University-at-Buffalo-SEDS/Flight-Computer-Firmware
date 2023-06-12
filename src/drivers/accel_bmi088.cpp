@@ -29,7 +29,7 @@ void accel_setup() {
 
     status = accel.setOdr(Bmi088Accel::ODR_100HZ_BW_40HZ);
 
-    if (status) {
+    if (!status) {
         Serial.println("Accel Setup ODR Error");
         Serial.println(status);
         abort();
@@ -37,7 +37,7 @@ void accel_setup() {
 
     status = accel.setRange(Bmi088Accel::RANGE_12G);
 
-    if (status) {
+    if (!status) {
         Serial.println("Accel Setup Range Error");
         Serial.println(status);
         abort();

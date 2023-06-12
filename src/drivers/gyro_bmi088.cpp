@@ -29,7 +29,7 @@ void gyro_setup() {
 
     status = gyro.setOdr(Bmi088Gyro::ODR_100HZ_BW_32HZ);
 
-    if (status) {
+    if (!status) {
         Serial.println("Gyro Setup ODR Error");
         Serial.println(status);
         abort();
@@ -37,7 +37,7 @@ void gyro_setup() {
 
     status = gyro.setRange(Bmi088Gyro::RANGE_2000DPS);
 
-    if (status) {
+    if (!status) {
         Serial.println("Gyro Setup Range Error");
         Serial.println(status);
         abort();
