@@ -162,6 +162,13 @@ void print_step()
 	gps_print();
 	accel_print();
 	baro_print();
+	Serial.print("Kalman [pos, rate, accel]: ");
+	Serial.print(kf.pos());
+	Serial.print("m, ");
+	Serial.print(kf.rate());
+	Serial.print("m/s, ");
+	Serial.print(kf.accel());
+	Serial.println("m/s^2");
 }
 
 void deployment_step()
