@@ -47,7 +47,9 @@ void baro_setup() {
 void baro_step() {
 	last_alt = bmp.readAltitude(SEALEVELPRESSURE_HPA);
 	last_press = bmp.pressure;
-	last_temp = bmp.temperature;
+	// Old logging and radio data is base on a centi-Celsius value from the barometer.
+	// Get into centi-Celsius
+	last_temp = bmp.temperature / 10;
 }
 
 float baro_get_altitude() {

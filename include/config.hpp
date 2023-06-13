@@ -63,11 +63,12 @@
 // Battery voltage level reading configuration.
 // TODO: Better numbers for these.
 // The value that the analog input reports when the battery is at 0V.
+// This is when the battery is at 6.4V for 2023 fc 
 #define BATT_MIN_READING 0
 // The value that the analog input reports when the battery is full.
-#define BATT_MAX_READING 41350
+#define BATT_MAX_READING 2660
 // The voltage that the battery is actually at when full (in millivolts).
-#define BATT_MAX_VOLTAGE 8320
+#define BATT_MAX_VOLTAGE 8420
 
 // The value that the analog input reports when the system is at 0V.
 #define SYS_MIN_READING 0

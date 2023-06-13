@@ -75,7 +75,7 @@ void setup()
 	pinMode(PIN_BUZZER, OUTPUT);
 	digitalWrite(PIN_BUZZER, LOW);
 
-	// pinMode(PIN_BATT_V, INPUT_ANALOG);
+	pinMode(PIN_BATT_V, INPUT_ANALOG);
 	// pinMode(PIN_SYS_V, INPUT_ANALOG);
 	analogReadResolution(12);  // Enable full resolution
 
@@ -295,11 +295,8 @@ void deployment_step()
 		}
 	}
 
-	uint32_t batt_v = 0;
-	// uint32_t batt_v = analogRead(PIN_BATT_V);
-	// Serial.print("Raw batt V: ");
-	// Serial.println(batt_v);
-	// batt_v = map(batt_v, BATT_MIN_READING, BATT_MAX_READING, 0, BATT_MAX_VOLTAGE);
+	uint32_t batt_v = analogRead(PIN_BATT_V);
+	batt_v = map(batt_v, BATT_MIN_READING, BATT_MAX_READING, 0, BATT_MAX_VOLTAGE);
 
 	uint32_t sys_v = 0;
 	// uint32_t sys_v = analogRead(PIN_SYS_V);
