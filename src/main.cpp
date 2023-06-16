@@ -31,8 +31,11 @@ void print_step();
 void deployment_step();
 void channel_step();
 void channel_fire(Channel chan);
+void test_pyrochannels();
 
 static std::array<ChannelStatus, channel_config.size()> channel_status;
+
+static bool launched = false;
 
 #ifdef KALMAN_GAINS
 static KalmanFilter kf(KALMAN_PERIOD / 1000.0f, {KALMAN_GAINS});
@@ -148,6 +151,20 @@ void command_step()
 		// Serial.println("Unrecognized command.");
 		break;
 	}
+
+	// Radio control
+	if (!launched) {
+		switch (XBEE_SERIAL.read()) {
+			case 'd':
+				channel_fire(Channel::Drogue);
+				break;
+			case 'm':
+				channel_fire(Channel::Main);
+				break;
+			default:
+				break;
+		}
+	}
 }
 
 void blink_step()
@@ -237,6 +254,7 @@ void deployment_step()
 			log_start();
 #endif
 			send_now = true;
+			launched = true;
 
 			// Turn buzzer off if we in  the launch phase
 			digitalWrite(PIN_BUZZER, LOW);

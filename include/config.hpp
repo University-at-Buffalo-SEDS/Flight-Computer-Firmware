@@ -1,7 +1,7 @@
 #pragma once
 #ifdef NATIVE_TEST
-#define PC0 0
-#define PC1 0
+#define PB5 0
+#define PB6 0
 #else
 #include <Arduino.h>
 #endif
@@ -106,8 +106,8 @@ enum class Channel {
 };
 
 constexpr std::array<ChannelConfig, (size_t)Channel::Count> channel_config = {
-	ChannelConfig {0},
-	ChannelConfig {0}
+	ChannelConfig {PB5},
+	ChannelConfig {PB6}
 };
 
 #define FLIGHT_FLASH_MOSI_PIN PB15
