@@ -49,7 +49,7 @@ void baro_step() {
 	last_press = bmp.pressure;
 	// Old logging and radio data is base on a centi-Celsius value from the barometer.
 	// Get into centi-Celsius
-	last_temp = bmp.temperature / 10;
+	last_temp = bmp.temperature * 100;
 }
 
 float baro_get_altitude() {
@@ -57,11 +57,11 @@ float baro_get_altitude() {
 }
 
 int16_t baro_get_temp() {
-	return last_press;
+	return last_temp;
 }
 
 float baro_get_pressure() {
-	return last_temp;
+	return last_press;
 }
 
 void baro_print()
@@ -73,4 +73,8 @@ void baro_print()
 	Serial.print(F("Pressure: "));
 	Serial.print(last_press);
 	Serial.println("Pa");
+
+	Serial.print(F("Temp: "));
+	Serial.print(last_temp / 100);
+	Serial.println("C");
 }
