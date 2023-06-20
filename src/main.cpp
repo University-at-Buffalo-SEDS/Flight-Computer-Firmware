@@ -8,6 +8,7 @@
 #include "radio.hpp"
 #include "scheduler.hpp"
 #include "util.hpp"
+#include "buzzer.hpp"
 
 #include <SPI.h>
 #include <Wire.h>
@@ -81,6 +82,9 @@ void setup()
 	pinMode(PIN_BATT_V, INPUT_ANALOG);
 	// pinMode(PIN_SYS_V, INPUT_ANALOG);
 	analogReadResolution(12);  // Enable full resolution
+	analogWriteResolution(12);  // Enable full resolution
+
+	buzzer_on();
 
 #if defined (USBCON) && defined(USBD_USE_CDC)
 	usb_serial.begin();
@@ -222,6 +226,7 @@ void deployment_step()
 		}
 		
 		phase = FlightPhase::Idle;
+		buzzer_ready();
 	}
 
 	accel_mag -= gravity_est_state.old_avg();
