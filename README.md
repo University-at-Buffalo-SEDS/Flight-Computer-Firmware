@@ -5,27 +5,33 @@ This is the current latest version of the flight computer, currently only build 
 
 # TODO
 
-- [X] BMP390 Drivers
-- [Arduino Lib/Examples](https://github.com/adafruit/Adafruit_BMP3XX)
+### Easiest:
 
-- [X] BMI088 Drivers
-- [Arduino Lib/Examples](https://github.com/bolderflight/bmi088-arduino)
+- [ ] I2C with LTC2990
+- [ ] Morse code buzzer on boot (beep boop codes)
+- [ ] I think my Gyro driver for the BMI088 might need to be tested more?
 
-- [ ] NEOM9N Drivers
+### Medium:
 
-APRS Radio:
-- [ ] DRA818U
-- [ ] Drivers
-- [ ] 1200 AFSK packets
+- [ ] SPI with NEOGPS (Can use the old flight computer as a test)
+- [ ] Decode or get a library for GMEA decoding: we only want LAT LON and ALT from gps data
+- [ ] Ground station update/reface [Ground station revamp](https://github.com/University-at-Buffalo-SEDS/Flight-Computer-Ground-Station)
 
-Serial Radio:
-- [ ] RFD900x Drivers (works just like a serial interface)
+### Very difficult:
+*requires a decent amount of reading compared to the others*
 
-Misc:
-- [ ] Change Format of logging data and radio packets
-- [ ] Buzzer beep boop codes
+- [ ] CAN BUS
+- [ ] APRS
+    - [ ] (AX.25 <-> AFSK <-> ~~DMA~~ <-> ~~DAC~~)
 
-Extra:
-- [ ] [Ground station revamp](https://github.com/University-at-Buffalo-SEDS/Flight-Computer-Ground-Station)
-- [ ] USB Virtual mass storage for grabbing csv formatted data.
+### Optional?
+
+- [ ] Either desktop program to get data from flight computer via usb serial OR
+   Emulate a mass storage device and show the flight data as files. This one would be cool and requires no software to be on another person's computer to get the data. But would require figuring out how USB mass storage protocol works.
+
+### Testing
+
+- [ ] Bandwidth test of RFD900x (all the data + payload data if that happens, this should be pretty easy, just a day or two)
+- [ ] Bandwidth test of CAN bus
+
 
