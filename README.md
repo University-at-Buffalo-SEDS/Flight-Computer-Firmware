@@ -9,7 +9,7 @@ This is the current latest version of the flight computer, currently only build 
 
 - [ ] I2C with LTC2990
 - [ ] Morse code buzzer on boot (beep boop codes)
-- [ ] I think my Gyro driver for the BMI088 might need to be tested more?
+- [x] I think my Gyro driver for the BMI088 might need to be tested more?
 
 ### Medium:
 
